@@ -38,32 +38,24 @@
         ruby { font-style: normal; }
         rt { font-size: 0.6em; font-weight: normal; }
 
-        input[type="number"] {
+        input[type="text"] {
             width: 90%;
-            padding: 15px;
+            padding: 12px;
             border: 2px solid #eee;
             border-radius: 12px;
-            font-size: 20px;
-            appearance: textfield;
+            font-size: 18px;
             outline: none;
             background: #fff;
+            text-align: right;
+            padding-right: 15px;
         }
-        input[type="number"]:focus { border-color: #789440; }
+        input[type="text"]:focus { border-color: #789440; }
         
-        ::placeholder {
-            color: #ccc;
-            opacity: 1;
-        }
-
-        /* 標準の上下ボタンを完全に消す */
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
+        ::placeholder { color: #ccc; opacity: 1; }
 
         .buy { border-color: #ffd54f; background-color: #fffde7; }
         .sell { border-color: #81c784; background-color: #f1f8e9; }
+        .goal { border-color: #ff8a65; background-color: #fff3e0; }
         .atm { border-color: #d1c4e9; background-color: #f3e5f5; }
 
         .result-card {
@@ -76,8 +68,32 @@
         }
         
         .red-val { color: #d32f2f; font-size: 1.3em; }
-        .sub-text { font-size: 0.9em; color: #795548; }
+        .blue-val { color: #03a9f4; }
+        .sub-text { font-size: 0.85em; color: #795548; margin-bottom: 5px; }
         .separator { font-size: 1.2em; font-weight: bold; margin: 0 10px; color: #795548; }
+        
+        .trip-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .highlight-box {
+            background: #fff9c4;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px dashed #ffb300;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .highlight-box.small {
+            background: #f0f4c3;
+            border-color: #afb42b;
+        }
+        .trip-num { font-size: 1.4em; color: #e64a19; display: block; }
+        .capacity-label { font-size: 0.75em; color: #558b2f; margin-top: 2px; }
     </style>
 </head>
 <body>
@@ -86,17 +102,17 @@
     <h2>カブ計算ツール</h2>
 
     <div class="box buy">
+        <label><ruby>買値<rt>かいね</rt></ruby></label>
         <div class="input-group">
-            <label><ruby>買値<rt>かいね</rt></ruby></label>
-            <p style="margin-bottom:5px; font-size:0.9em;">1カブの値段</p>
-            <input type="number" id="buyPrice" placeholder="90" oninput="calc()" class="no-scroll">
+            <p class="sub-text">1カブの値段</p>
+            <input type="text" id="buyPrice" placeholder="90" class="comma-input">
         </div>
         <div class="input-group">
-            <p style="margin-bottom:5px; font-size:0.9em;">持てる量（1列＝10マス）</p>
+            <p class="sub-text">持てる量（1列＝10マス）</p>
             <div style="display: flex; align-items: center;">
-                <input type="number" id="rows" placeholder="列" oninput="calc()" class="no-scroll">
+                <input type="text" id="rows" placeholder="列" class="comma-input">
                 <span class="separator">＋</span>
-                <input type="number" id="slots" placeholder="マス" oninput="calc()" class="no-scroll">
+                <input type="text" id="slots" placeholder="マス" class="comma-input">
             </div>
         </div>
         <div class="result-card">
@@ -106,56 +122,143 @@
     </div>
 
     <div class="box sell">
+        <label><ruby>売値<rt>うりね</rt></ruby></label>
         <div class="input-group">
-            <label><ruby>売値<rt>うりね</rt></ruby></label>
-            <p style="margin-bottom:5px; font-size:0.9em;">1カブの値段</p>
-            <input type="number" id="sellPrice" placeholder="660" oninput="calc()" class="no-scroll">
+            <p class="sub-text">1カブの値段</p>
+            <input type="text" id="sellPrice" placeholder="660" class="comma-input">
         </div>
         <div class="result-card">
             <span class="sub-text">※<span id="targetStocks">0</span> カブ売却時</span><br>
             受取額：<span id="sales" class="red-val">0</span> ベル<br>
-            <span style="color:#03a9f4;">利益（差額）：＋ <span id="profit">0</span> ベル</span>
+            <span class="blue-val">利益：＋ <span id="profit">0</span> ベル</span>
+        </div>
+    </div>
+
+    <div class="box goal">
+        <label>【目標達成への道】</label>
+        <div class="input-group">
+            <p class="sub-text">現在の貯金額</p>
+            <input type="text" id="currentBank" placeholder="0" class="comma-input">
+        </div>
+        <div class="input-group">
+            <p class="sub-text">目標の金額</p>
+            <input type="text" id="targetBank" placeholder="999,999,999" class="comma-input">
+        </div>
+        
+        <div class="result-card">
+            不足額：<span id="neededAmount" class="red-val">0</span> ベル
+            
+            <div class="trip-compare">
+                <div class="highlight-box">
+                    <span class="sub-text">カバン最大</span>
+                    <span class="capacity-label">(40マス)</span>
+                    <span class="trip-num"><span id="tripsFull">0</span>回</span>
+                </div>
+                <div class="highlight-box small">
+                    <span class="sub-text">今の設定</span>
+                    <span class="capacity-label">(カバン<span id="currentCapacityText">0</span>マス)</span>
+                    <span class="trip-num"><span id="tripsCurrent">0</span>回</span>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="box atm">
+        <label>【ATM入金補助】</label>
         <div class="input-group">
-            <label>【ATM入金】</label>
-            <p style="margin-bottom:5px; font-size:0.9em;">99,000ベル × 袋数</p>
-            <input type="number" id="bags" placeholder="袋数" oninput="calc()" class="no-scroll">
+            <p class="sub-text">99,000ベル × 袋数</p>
+            <input type="text" id="bags" placeholder="袋数" class="comma-input">
         </div>
         <div class="result-card">
-            入金合計：<span id="atmTotal" style="color:#673ab7; font-size:1.2em;">0</span> ベル
+            入金合計：<span id="atmTotal" style="color:#673ab7; font-size:1.3em;">0</span> ベル
         </div>
     </div>
 </div>
 
 <script>
-// ホイール操作による数値変更を無効化する
-document.querySelectorAll('.no-scroll').forEach(el => {
-    el.addEventListener('wheel', function(e) {
-        e.preventDefault();
-    }, { passive: false });
+let isComposing = false;
+
+document.querySelectorAll('.comma-input').forEach(input => {
+    input.addEventListener('compositionstart', () => { isComposing = true; });
+    input.addEventListener('compositionend', function() {
+        isComposing = false;
+        formatAndCalc(this);
+    });
+    input.addEventListener('input', function() {
+        if (!isComposing) { formatAndCalc(this); }
+    });
 });
 
+// 全角数字を半角に変換し、カンマを付けて計算する
+function formatAndCalc(el) {
+    let cursor = el.selectionStart;
+    let originalLen = el.value.length;
+    
+    // 全角数字を半角に置換する処理
+    let val = el.value.replace(/[０-９]/g, function(s) {
+        return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+    });
+    
+    // 数字以外の文字を削除
+    let rawVal = val.replace(/[^0-9]/g, '');
+    
+    if (rawVal !== "") {
+        el.value = Number(rawVal).toLocaleString();
+    } else {
+        el.value = "";
+    }
+    
+    let newLen = el.value.length;
+    el.setSelectionRange(cursor + (newLen - originalLen), cursor + (newLen - originalLen));
+    
+    calc();
+}
+
+function parseNumber(str) {
+    return Number(str.replace(/,/g, '')) || 0;
+}
+
 function calc() {
-    const bPrice = Number(document.getElementById('buyPrice').value) || 0;
-    const rows = Number(document.getElementById('rows').value) || 0;
-    const slots = Number(document.getElementById('slots').value) || 0;
-    const sPrice = Number(document.getElementById('sellPrice').value) || 0;
-    const bags = Number(document.getElementById('bags').value) || 0;
+    const bPrice = parseNumber(document.getElementById('buyPrice').value);
+    const rows = parseNumber(document.getElementById('rows').value);
+    const slots = parseNumber(document.getElementById('slots').value);
+    const sPrice = parseNumber(document.getElementById('sellPrice').value);
+    const bags = parseNumber(document.getElementById('bags').value);
+    const currentBank = parseNumber(document.getElementById('currentBank').value);
+    const targetBankText = document.getElementById('targetBank').value;
+    const targetBank = targetBankText === "" ? 999999999 : parseNumber(targetBankText);
 
-    const totalStocks = ((rows * 10) + slots) * 100;
-    const cost = totalStocks * bPrice;
-    const sales = totalStocks * sPrice;
-    const profit = sales - cost;
+    const totalCapacitySlots = (rows * 10) + slots;
+    document.getElementById('currentCapacityText').innerText = totalCapacitySlots;
 
-    document.getElementById('totalStocks').innerText = totalStocks.toLocaleString();
-    document.getElementById('targetStocks').innerText = totalStocks.toLocaleString();
-    document.getElementById('cost').innerText = cost.toLocaleString();
-    document.getElementById('sales').innerText = sales.toLocaleString();
-    document.getElementById('profit').innerText = profit.toLocaleString();
+    const currentStocks = totalCapacitySlots * 100;
+    const costCurrent = currentStocks * bPrice;
+    const salesCurrent = currentStocks * sPrice;
+    const profitCurrent = salesCurrent - costCurrent;
+
+    document.getElementById('totalStocks').innerText = currentStocks.toLocaleString();
+    document.getElementById('targetStocks').innerText = currentStocks.toLocaleString();
+    document.getElementById('cost').innerText = costCurrent.toLocaleString();
+    document.getElementById('sales').innerText = salesCurrent.toLocaleString();
+    document.getElementById('profit').innerText = profitCurrent.toLocaleString();
     document.getElementById('atmTotal').innerText = (bags * 99000).toLocaleString();
+
+    const needed = Math.max(0, targetBank - currentBank);
+    document.getElementById('neededAmount').innerText = needed.toLocaleString();
+
+    const profitPerFullTrip = (4000 * sPrice) - (4000 * bPrice);
+    
+    if (profitPerFullTrip > 0 && needed > 0) {
+        document.getElementById('tripsFull').innerText = Math.ceil(needed / profitPerFullTrip).toLocaleString();
+    } else {
+        document.getElementById('tripsFull').innerText = "0";
+    }
+
+    if (profitCurrent > 0 && needed > 0) {
+        document.getElementById('tripsCurrent').innerText = Math.ceil(needed / profitCurrent).toLocaleString();
+    } else {
+        document.getElementById('tripsCurrent').innerText = "0";
+    }
 }
 </script>
 
