@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>カブ計算ツール</title>
+    <title>カブ計算ツール（完成版）</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
@@ -39,7 +39,7 @@
         rt { font-size: 0.6em; font-weight: normal; }
 
         input[type="text"] {
-            width: 90%;
+            width: 80%;
             padding: 12px;
             border: 2px solid #eee;
             border-radius: 12px;
@@ -56,6 +56,7 @@
         .buy { border-color: #ffd54f; background-color: #fffde7; }
         .sell { border-color: #81c784; background-color: #f1f8e9; }
         .goal { border-color: #ff8a65; background-color: #fff3e0; }
+        .plan { border-color: #4db6ac; background-color: #e0f2f1; }
         .atm { border-color: #d1c4e9; background-color: #f3e5f5; }
 
         .result-card {
@@ -88,12 +89,17 @@
             flex-direction: column;
             justify-content: center;
         }
-        .highlight-box.small {
-            background: #f0f4c3;
-            border-color: #afb42b;
+        .highlight-box.small { background: #f0f4c3; border-color: #afb42b; }
+        .highlight-box.plan-style {
+            background: #b2dfdb;
+            border-color: #00897b;
+            grid-column: span 2;
+            text-align: left;
+            padding: 15px;
         }
         .trip-num { font-size: 1.4em; color: #e64a19; display: block; }
         .capacity-label { font-size: 0.75em; color: #558b2f; margin-top: 2px; }
+        .step-list { margin: 10px 0; padding-left: 20px; font-size: 0.9em; color: #00695c; }
     </style>
 </head>
 <body>
@@ -110,9 +116,9 @@
         <div class="input-group">
             <p class="sub-text">持てる量（1列＝10マス）</p>
             <div style="display: flex; align-items: center;">
-                <input type="text" id="rows" placeholder="列" class="comma-input">
+                <input type="text" id="rows" placeholder="2" class="comma-input"> <span style="font-size:0.8em; margin-left:5px;">列</span>
                 <span class="separator">＋</span>
-                <input type="text" id="slots" placeholder="マス" class="comma-input">
+                <input type="text" id="slots" placeholder="5" class="comma-input"> <span style="font-size:0.8em; margin-left:5px;">マス</span>
             </div>
         </div>
         <div class="result-card">
@@ -163,6 +169,15 @@
         </div>
     </div>
 
+    <div class="box plan">
+        <label>【わらしべ長者プラン】</label>
+        <div class="result-card">
+            <div class="highlight-box plan-style" id="planOutput">
+                貯金額を入力してください
+            </div>
+        </div>
+    </div>
+
     <div class="box atm">
         <label>【ATM入金補助】</label>
         <div class="input-group">
@@ -177,90 +192,92 @@
 
 <script>
 let isComposing = false;
-
 document.querySelectorAll('.comma-input').forEach(input => {
     input.addEventListener('compositionstart', () => { isComposing = true; });
-    input.addEventListener('compositionend', function() {
-        isComposing = false;
-        formatAndCalc(this);
-    });
-    input.addEventListener('input', function() {
-        if (!isComposing) { formatAndCalc(this); }
-    });
+    input.addEventListener('compositionend', function() { isComposing = false; formatAndCalc(this); });
+    input.addEventListener('input', function() { if (!isComposing) { formatAndCalc(this); } });
 });
 
-// 全角数字を半角に変換し、カンマを付けて計算する
 function formatAndCalc(el) {
     let cursor = el.selectionStart;
     let originalLen = el.value.length;
-    
-    // 全角数字を半角に置換する処理
-    let val = el.value.replace(/[０-９]/g, function(s) {
-        return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
-    });
-    
-    // 数字以外の文字を削除
+    let val = el.value.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
     let rawVal = val.replace(/[^0-9]/g, '');
-    
-    if (rawVal !== "") {
-        el.value = Number(rawVal).toLocaleString();
-    } else {
-        el.value = "";
-    }
-    
+    el.value = rawVal !== "" ? Number(rawVal).toLocaleString() : "";
     let newLen = el.value.length;
     el.setSelectionRange(cursor + (newLen - originalLen), cursor + (newLen - originalLen));
-    
     calc();
 }
 
-function parseNumber(str) {
+function parseNumber(str, placeholder) {
+    if (str === "" && placeholder) return parseNumber(placeholder);
     return Number(str.replace(/,/g, '')) || 0;
 }
 
 function calc() {
-    const bPrice = parseNumber(document.getElementById('buyPrice').value);
-    const rows = parseNumber(document.getElementById('rows').value);
-    const slots = parseNumber(document.getElementById('slots').value);
-    const sPrice = parseNumber(document.getElementById('sellPrice').value);
-    const bags = parseNumber(document.getElementById('bags').value);
+    const bPrice = parseNumber(document.getElementById('buyPrice').value, "90");
+    const sPrice = parseNumber(document.getElementById('sellPrice').value, "660");
+    const rows = parseNumber(document.getElementById('rows').value, "2");
+    const slots = parseNumber(document.getElementById('slots').value, "5");
     const currentBank = parseNumber(document.getElementById('currentBank').value);
-    const targetBankText = document.getElementById('targetBank').value;
-    const targetBank = targetBankText === "" ? 999999999 : parseNumber(targetBankText);
+    const targetBank = parseNumber(document.getElementById('targetBank').value, "999999999");
+    const bags = parseNumber(document.getElementById('bags').value);
 
     const totalCapacitySlots = (rows * 10) + slots;
+    const capacityStocks = totalCapacitySlots * 100;
+    const costCurrent = capacityStocks * bPrice;
+    
     document.getElementById('currentCapacityText').innerText = totalCapacitySlots;
-
-    const currentStocks = totalCapacitySlots * 100;
-    const costCurrent = currentStocks * bPrice;
-    const salesCurrent = currentStocks * sPrice;
-    const profitCurrent = salesCurrent - costCurrent;
-
-    document.getElementById('totalStocks').innerText = currentStocks.toLocaleString();
-    document.getElementById('targetStocks').innerText = currentStocks.toLocaleString();
+    document.getElementById('totalStocks').innerText = capacityStocks.toLocaleString();
+    document.getElementById('targetStocks').innerText = capacityStocks.toLocaleString();
     document.getElementById('cost').innerText = costCurrent.toLocaleString();
-    document.getElementById('sales').innerText = salesCurrent.toLocaleString();
-    document.getElementById('profit').innerText = profitCurrent.toLocaleString();
+    document.getElementById('sales').innerText = (capacityStocks * sPrice).toLocaleString();
+    document.getElementById('profit').innerText = ((sPrice - bPrice) * capacityStocks).toLocaleString();
     document.getElementById('atmTotal').innerText = (bags * 99000).toLocaleString();
 
     const needed = Math.max(0, targetBank - currentBank);
     document.getElementById('neededAmount').innerText = needed.toLocaleString();
 
-    const profitPerFullTrip = (4000 * sPrice) - (4000 * bPrice);
-    
-    if (profitPerFullTrip > 0 && needed > 0) {
-        document.getElementById('tripsFull').innerText = Math.ceil(needed / profitPerFullTrip).toLocaleString();
-    } else {
-        document.getElementById('tripsFull').innerText = "0";
+    if (sPrice > bPrice) {
+        document.getElementById('tripsFull').innerText = Math.ceil(needed / ((sPrice - bPrice) * 4000)).toLocaleString();
+        document.getElementById('tripsCurrent').innerText = Math.ceil(needed / ((sPrice - bPrice) * capacityStocks)).toLocaleString();
     }
 
-    if (profitCurrent > 0 && needed > 0) {
-        document.getElementById('tripsCurrent').innerText = Math.ceil(needed / profitCurrent).toLocaleString();
+    let output = document.getElementById('planOutput');
+    if (bPrice > 0 && sPrice > bPrice && currentBank > 0) {
+        let tempBank = currentBank;
+        let stepCount = 0;
+        let log = "";
+        
+        while (tempBank < costCurrent && stepCount < 100) {
+            stepCount++;
+            let buyAmount = Math.floor(tempBank / bPrice);
+            let profit = buyAmount * (sPrice - bPrice);
+            if (stepCount <= 3) {
+                log += `<li>${stepCount}回目：${buyAmount.toLocaleString()}カブ購入</li>`;
+            }
+            tempBank += profit;
+        }
+
+        let message = `<div><b>カバン(${totalCapacitySlots}マス)</b>を満タンにするための計画：</div>`;
+        if (stepCount === 0) {
+            message += `<div style="margin:10px 0;"><b class="blue-val">1回目からカバンを満タンにできます！</b></div>`;
+        } else {
+            if (stepCount > 3) log += `<li>...あと ${stepCount - 3} 回の往復 ...</li>`;
+            log += `<li>（3回目と同じように往復して資金を貯めます）</li>`;
+            message += `<ul class="step-list">${log}</ul>`;
+            message += `<div>あと <b class="red-val">${stepCount}</b> 往復でカバンがいっぱいになります。</div>`;
+        }
+
+        let remainingNeeded = Math.max(0, targetBank - tempBank);
+        let finalTrips = Math.ceil(remainingNeeded / ((sPrice - bPrice) * capacityStocks));
+        
+        message += `<div style="margin-top:10px; border-top:1px solid #00897b; padding-top:10px;">目標達成までさらに <b class="red-val">${finalTrips}</b> 往復、<br>合計で <b style="font-size:1.4em;">${stepCount + finalTrips}</b> 往復必要です。</div>`;
+        output.innerHTML = message;
     } else {
-        document.getElementById('tripsCurrent').innerText = "0";
+        output.innerHTML = "買値、売値、貯金額を入力してください。";
     }
 }
 </script>
-
 </body>
 </html>
