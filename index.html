@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>カブ計算ツール</title>
+    <title>カブ計算ツール（やさしい版）</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
@@ -51,14 +51,12 @@
         }
         input[type="text"]:focus { border-color: #789440; }
         
-        /* 入力不可の時の見た目 */
         input[type="text"]:disabled {
             background: #eceff1;
-            color: transparent; /* 文字を完全に見えなくする */
+            color: transparent;
             border-color: #cfd8dc;
             cursor: not-allowed;
         }
-        /* 入力不可の時はプレースホルダも消す */
         input[type="text"]:disabled::placeholder {
             color: transparent;
         }
@@ -128,90 +126,96 @@
     <h2>カブ計算ツール</h2>
 
     <div class="box buy">
-        <label><ruby>買値<rt>かいね</rt></ruby></label>
+        <label>
+            <ruby>買値<rt>かいね</rt></ruby>
+            <span style="font-size: 0.7em; font-weight: normal;">（カブを<ruby>買<rt>か</rt></ruby>う<ruby>値段<rt>ねだん</rt></ruby>）</span>
+        </label>
         <div class="input-group">
-            <p class="sub-text">1カブの値段</p>
+            <p class="sub-text">1カブの<ruby>値段<rt>ねだん</rt></ruby></p>
             <input type="text" id="buyPrice" placeholder="90" class="comma-input">
         </div>
         <div class="input-group">
-            <p class="sub-text">持てる量（1列＝10マス / 最大4列）</p>
+            <p class="sub-text"><ruby>持<rt>も</rt></ruby>てる<ruby>量<rt>りょう</rt></ruby>（1<ruby>列<rt>れつ</rt></ruby>＝10マス / <ruby>最大<rt>さいだい</rt></ruby>4<ruby>列<rt>れつ</rt></ruby>）</p>
             <div style="display: flex; align-items: center;">
-                <input type="text" id="rows" placeholder="2" class="comma-input"> <span style="font-size:0.8em; margin-left:5px;">列</span>
+                <input type="text" id="rows" placeholder="2" class="comma-input"> <span style="font-size:0.8em; margin-left:5px;"><ruby>列<rt>れつ</rt></ruby></span>
                 <span class="separator">＋</span>
                 <input type="text" id="slots" placeholder="5" class="comma-input"> <span style="font-size:0.8em; margin-left:5px;">マス</span>
             </div>
             <div id="maxAlert" style="color: #d32f2f; font-size: 0.7em; margin-top: 5px; display: none; font-weight: bold;">
-                ※4列（40マス）が最大です
+                ※4<ruby>列<rt>れつ</rt></ruby>（40マス）が<ruby>最大<rt>さいだい</rt></ruby>です
             </div>
         </div>
         <div class="result-card">
-            合計：<span id="totalStocks">0</span> カブ<br>
-            支払額：<span id="cost" class="red-val">0</span> ベル
+            <ruby>合計<rt>ごうけい</rt></ruby>：<span id="totalStocks">0</span> カブ<br>
+            <ruby>支払額<rt>しはらいがく</rt></ruby>：<span id="cost" class="red-val">0</span> ベル
         </div>
     </div>
 
     <div class="box sell">
-        <label><ruby>売値<rt>うりね</rt></ruby></label>
+        <label>
+            <ruby>売値<rt>うりね</rt></ruby>
+            <span style="font-size: 0.7em; font-weight: normal;">（カブを<ruby>売<rt>う</rt></ruby>る<ruby>値段<rt>ねだん</rt></ruby>）</span>
+        </label>
         <div class="input-group">
-            <p class="sub-text">1カブの値段</p>
+            <p class="sub-text">1カブの<ruby>値段<rt>ねだん</rt></ruby></p>
             <input type="text" id="sellPrice" placeholder="660" class="comma-input">
         </div>
         <div class="result-card">
-            <span class="sub-text">※<span id="targetStocks">0</span> カブ売却時</span><br>
-            受取額：<span id="sales" class="red-val">0</span> ベル<br>
-            <span class="blue-val">利益：＋ <span id="profit">0</span> ベル</span>
+            <span class="sub-text">※<span id="targetStocks">0</span> カブ<ruby>売却時<rt>ばいきゃくじ</rt></ruby></span><br>
+            <ruby>受取額<rt>うけとりがく</rt></ruby>：<span id="sales" class="red-val">0</span> ベル<br>
+            <span class="blue-val"><ruby>利益<rt>りえき</rt></ruby>：＋ <span id="profit">0</span> ベル</span>
         </div>
     </div>
 
     <div class="box goal">
-        <label>【目標達成への道】</label>
+        <label>【<ruby>目標達成<rt>もくひょうたっせい</rt></ruby>への<ruby>道<rt>みち</rt></ruby>】</label>
         <div class="input-group">
-            <p class="sub-text">現在の貯金額</p>
+            <p class="sub-text"><ruby>現在<rt>げんざい</rt></ruby>の<ruby>貯金額<rt>ちょきんがく</rt></ruby></p>
             <input type="text" id="currentBank" placeholder="0" class="comma-input">
         </div>
         <div class="input-group">
-            <p class="sub-text">目標の金額</p>
+            <p class="sub-text"><ruby>目標<rt>もくひょう</rt></ruby>の<ruby>金額<rt>きんがく</rt></ruby></p>
             <input type="text" id="targetBank" placeholder="999,999,999" class="comma-input">
         </div>
         
         <div class="result-card">
-            不足額：<span id="neededAmount" class="red-val">0</span> ベル
+            <ruby>不足額<rt>ふそくがく</rt></ruby>：<span id="neededAmount" class="red-val">0</span> ベル
             
             <div id="tripDisplay" class="trip-compare">
                 <div class="highlight-box">
-                    <span class="sub-text">カバン最大</span>
+                    <span class="sub-text">カバン<ruby>最大<rt>さいだい</rt></ruby></span>
                     <span class="capacity-label">(40マス)</span>
-                    <span class="trip-num"><span id="tripsFull">0</span>回</span>
+                    <span class="trip-num"><span id="tripsFull">0</span><ruby>回<rt>かい</rt></ruby></span>
                 </div>
                 <div class="highlight-box small">
-                    <span class="sub-text">今の設定</span>
+                    <span class="sub-text"><ruby>今<rt>いま</rt></ruby>の<ruby>設定<rt>せってい</rt></ruby></span>
                     <span class="capacity-label">(カバン<span id="currentCapacityText">0</span>マス)</span>
-                    <span class="trip-num"><span id="tripsCurrent">0</span>回</span>
+                    <span class="trip-num"><span id="tripsCurrent">0</span><ruby>回<rt>かい</rt></ruby></span>
                 </div>
             </div>
             <div id="tripAlert" class="highlight-box plan-style" style="display:none; background:#ffecb3; border-color:#ffa000; text-align:center;">
-                <span class="notice-text">資金が足りません！<br>下の「わらしべ長者プラン」を確認してね</span>
+                <span class="notice-text"><ruby>資金<rt>しきん</rt></ruby>が<ruby>足<rt>た</rt></ruby>りません！<br><ruby>下<rt>した</rt></ruby>の「わらしべ<ruby>長者<rt>ちょうじゃ</rt></ruby>プラン」を<ruby>確認<rt>かくにん</rt></ruby>してね</span>
             </div>
         </div>
     </div>
 
     <div class="box plan">
-        <label>【わらしべ長者プラン】</label>
+        <label>【わらしべ<ruby>長者<rt>ちょうじゃ</rt></ruby>プラン】</label>
         <div class="result-card">
             <div class="highlight-box plan-style" id="planOutput">
-                買値、売値、貯金額を入力してください。
+                <ruby>買値<rt>かいね</rt></ruby>、<ruby>売値<rt>うりね</rt></ruby>、<ruby>貯金額<rt>ちょきんがく</rt></ruby>を<ruby>入力<rt>にゅうりょく</rt></ruby>してください。
             </div>
         </div>
     </div>
 
     <div class="box atm">
-        <label>【ATM入金補助】</label>
+        <label>【ATM<ruby>入金補助<rt>にゅうきんほじょ</rt></ruby>】</label>
         <div class="input-group">
-            <p class="sub-text">99,000ベル × 袋数</p>
+            <p class="sub-text">99,000ベル × <ruby>袋数<rt>ふくろすう</rt></ruby></p>
             <input type="text" id="bags" placeholder="袋数" class="comma-input">
         </div>
         <div class="result-card">
-            入金合計：<span id="atmTotal" style="color:#673ab7; font-size:1.3em;">0</span> ベル
+            <ruby>入金合計<rt>にゅうきんごうけい</rt></ruby>：<span id="atmTotal" style="color:#673ab7; font-size:1.3em;">0</span> ベル
         </div>
     </div>
 </div>
@@ -252,14 +256,13 @@ function calc() {
     let rows = parseNumber(rowsInput.value);
     let slots = parseNumber(slotsInput.value);
 
-    // --- カバン容量のガード強化 ---
     if (rows >= 4) {
         rows = 4;
         rowsInput.value = "4";
         slots = 0;
-        slotsInput.value = ""; // 入力値を消す
+        slotsInput.value = "";
         slotsInput.disabled = true; 
-        maxAlert.style.display = "block"; // 最大であることを伝える
+        maxAlert.style.display = "block";
     } else {
         slotsInput.disabled = false;
         maxAlert.style.display = "none";
@@ -344,4 +347,3 @@ function calc() {
 </script>
 </body>
 </html>
-
