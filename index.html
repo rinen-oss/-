@@ -13,6 +13,10 @@
             justify-content: center;
             padding: 20px;
         }
+
+        /* ========= ふりがなOFF（rtだけ非表示） ========= */
+        body.no-ruby rt { display: none; }
+
         .container {
             background: white;
             padding: 25px;
@@ -22,6 +26,19 @@
             max-width: 450px;
         }
         h2 { text-align: center; color: #789440; margin-bottom: 20px; }
+
+        /* ========= ふりがな切替ボタン ========= */
+        #rubyToggle{
+            display:block;
+            margin: 0 auto 15px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            border: 1px solid #789440;
+            background: #fff;
+            cursor: pointer;
+            font-size: 0.85em;
+        }
+
         .box {
             margin-bottom: 15px;
             padding: 20px;
@@ -107,10 +124,10 @@
             border-color: #00897b;
             grid-column: span 2;
             text-align: left;
-            padding: 12px 15px;     /* 下余白を詰める */
+            padding: 12px 15px;
             width: 90%;
             display: block;
-            line-height: 1.65;      /* 全体の行間を少し締める */
+            line-height: 1.65;
         }
 
         /* プラン内のデフォルト余白を強制的に消す（下余白対策） */
@@ -135,7 +152,6 @@
         .trip-num { font-size: 1.4em; color: #e64a19; display: block; }
         .capacity-label { font-size: 0.75em; color: #558b2f; margin-top: 2px; }
 
-        /* ★ulの下余白を消して ...あと を詰める */
         .step-list {
             margin: 10px 0 0;
             padding-left: 20px;
@@ -143,12 +159,8 @@
             color: #00695c;
             line-height: 1.6;
         }
-        .step-list li{
-            margin: 0;
-            padding: 0;
-        }
+        .step-list li{ margin: 0; padding: 0; }
 
-        /* ★...あと / 注釈：左揃えを確実化 */
         .step-note{
             margin: 0 0 0 20px;
             font-size: 0.9em;
@@ -160,7 +172,6 @@
             text-align: left !important;
         }
 
-        /* 資金不足時のアラート */
         #tripAlert {
             background: #ffecb3;
             border-color: #ffa000;
@@ -185,6 +196,8 @@
 <div class="container">
     <h2>カブ価計算・利益計算ツール</h2>
 
+    <button id="rubyToggle" type="button">ふりがな：ON</button>
+
     <div class="box buy">
         <label>
             <ruby>買値<rt>かいね</rt></ruby>
@@ -192,11 +205,11 @@
         </label>
 
         <div class="input-group">
-            <p class="sub-text">1カブの値段</p>
+            <p class="sub-text">1カブの<ruby>値段<rt>ねだん</rt></ruby></p>
             <input type="text" id="buyPrice" placeholder="90" class="comma-input">
         </div>
         <div class="input-group">
-            <p class="sub-text">持てる量（1列＝10マス / 最大4列）</p>
+            <p class="sub-text">持てる<ruby>量<rt>りょう</rt></ruby>（1<ruby>列<rt>れつ</rt></ruby>＝10マス / <ruby>最大<rt>さいだい</rt></ruby>4<ruby>列<rt>れつ</rt></ruby>）</p>
             <div style="display: flex; align-items: center;">
                 <input type="text" id="rows" placeholder="2" class="comma-input"> <span style="font-size:0.8em; margin-left:5px;">列</span>
                 <span class="separator">＋</span>
@@ -216,7 +229,7 @@
         <label><ruby>売値<rt>うりね</rt></ruby>
         <span style="font-size: 0.7em; font-weight: normal;">（カブを<ruby>売<rt>う</rt></ruby>る<ruby>値段<rt>ねだん</rt></ruby>）</span></label>
         <div class="input-group">
-            <p class="sub-text">1カブの値段</p>
+            <p class="sub-text">1カブの<ruby>値段<rt>ねだん</rt></ruby></p>
             <input type="text" id="sellPrice" placeholder="660" class="comma-input">
         </div>
         <div class="result-card">
@@ -366,7 +379,6 @@ function calc() {
 
     let output = document.getElementById('planOutput');
 
-    /* 入力前：1行＋縦中央 */
     if (buyVal === "" || sellVal === "" || bankVal === "") {
         document.getElementById('tripDisplay').style.display = "grid";
         document.getElementById('tripAlert').style.display = "none";
@@ -411,7 +423,6 @@ function calc() {
             document.getElementById('tripsCurrent').innerText = Math.ceil(needed / ((sPrice - bPrice) * capacityStocks)).toLocaleString();
         }
 
-        /* カタカナ（カバン等）にふりがなは付けない */
         let message = `<div><b>カバン(${totalCapacitySlots}マス)</b>を<ruby>満タン<rt>まんたん</rt></ruby>にする<ruby>計画<rt>けいかく</rt></ruby>：</div>`;
 
         if (stepCount === 0) {
@@ -447,6 +458,15 @@ function calc() {
         output.innerText = "売値は買値より高く設定してください。";
     }
 }
+
+/* ふりがな ON/OFF */
+const rubyBtn = document.getElementById('rubyToggle');
+rubyBtn.addEventListener('click', () => {
+    document.body.classList.toggle('no-ruby');
+    rubyBtn.textContent = document.body.classList.contains('no-ruby')
+        ? 'ふりがな：OFF'
+        : 'ふりがな：ON';
+});
 </script>
 </body>
 </html>
