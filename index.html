@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>カブ計算ツール（完成版・親切レイアウト）</title>
+    <title>カブ計算ツール</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
@@ -36,7 +36,7 @@
             margin-bottom: 8px;
         }
         ruby { font-style: normal; }
-        rt { font-size: 0.6em; font-weight: normal; line-height: 1; }
+        rt { font-size: 0.6em; font-weight: normal; }
 
         input[type="text"] {
             width: 80%;
@@ -46,21 +46,20 @@
             font-size: 18px;
             outline: none;
             background: #fff;
+            color: #4a3c31;
             text-align: right;
             padding-right: 15px;
         }
         input[type="text"]:focus { border-color: #789440; }
-        
+
+        /* 入力不可の時の見た目 */
         input[type="text"]:disabled {
             background: #eceff1;
             color: transparent;
             border-color: #cfd8dc;
             cursor: not-allowed;
         }
-        input[type="text"]:disabled::placeholder {
-            color: transparent;
-        }
-        
+        input[type="text"]:disabled::placeholder { color: transparent; }
         ::placeholder { color: #ccc; opacity: 1; }
 
         .buy { border-color: #ffd54f; background-color: #fffde7; }
@@ -77,12 +76,12 @@
             font-weight: bold;
             line-height: 1.8;
         }
-        
+
         .red-val { color: #d32f2f; font-size: 1.3em; }
         .blue-val { color: #03a9f4; }
         .sub-text { font-size: 0.85em; color: #795548; margin-bottom: 5px; }
         .separator { font-size: 1.2em; font-weight: bold; margin: 0 10px; color: #795548; }
-        
+
         .trip-compare {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -101,29 +100,83 @@
             min-height: 80px;
         }
         .highlight-box.small { background: #f0f4c3; border-color: #afb42b; }
+
+        /* わらしべ長者プラン枠 */
         .highlight-box.plan-style {
             background: #b2dfdb;
             border-color: #00897b;
             grid-column: span 2;
             text-align: left;
-            padding: 15px;
-            width: auto; /* 幅を自動調整 */
+            padding: 12px 15px;     /* 下余白を詰める */
+            width: 90%;
+            display: block;
+            line-height: 1.65;      /* 全体の行間を少し締める */
         }
+
+        /* プラン内のデフォルト余白を強制的に消す（下余白対策） */
+        .plan-style div { margin: 0; }
+        .plan-style ul { margin: 8px 0 0; }
+        .plan-style ul:last-child { margin-bottom: 0; }
+        .plan-style > :last-child { margin-bottom: 0 !important; }
+
+        #planOutput { white-space: normal; word-break: keep-all; }
+
+        /* 入力前だけ：縦中央＋1行固定 */
+        #planOutput.plan-empty {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 70px;
+        }
+        #planOutput .empty-msg{
+            white-space: nowrap;
+        }
+
         .trip-num { font-size: 1.4em; color: #e64a19; display: block; }
         .capacity-label { font-size: 0.75em; color: #558b2f; margin-top: 2px; }
-        .step-list { margin: 10px 0; padding-left: 20px; font-size: 0.9em; color: #00695c; }
-        
+
+        /* ★ulの下余白を消して ...あと を詰める */
+        .step-list {
+            margin: 10px 0 0;
+            padding-left: 20px;
+            font-size: 0.9em;
+            color: #00695c;
+            line-height: 1.6;
+        }
+        .step-list li{
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ★...あと / 注釈：左揃えを確実化 */
+        .step-note{
+            margin: 0 0 0 20px;
+            font-size: 0.9em;
+            color: #00695c;
+            line-height: 1.6;
+            font-weight: bold;
+            display: block;
+            width: 100%;
+            text-align: left !important;
+        }
+
+        /* 資金不足時のアラート */
+        #tripAlert {
+            background: #ffecb3;
+            border-color: #ffa000;
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            border: 2px dashed #ffa000;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
         .notice-text {
             font-size: 0.9em;
             color: #d32f2f;
             font-weight: bold;
-            line-height: 1.5;
-        }
-
-        /* 案内テキストが縦にならないように保護 */
-        #planOutput {
-            white-space: normal;
-            word-break: keep-all;
+            line-height: 1.2;
         }
     </style>
 </head>
@@ -137,19 +190,20 @@
             <ruby>買値<rt>かいね</rt></ruby>
             <span style="font-size: 0.7em; font-weight: normal;">（カブを<ruby>買<rt>か</rt></ruby>う<ruby>値段<rt>ねだん</rt></ruby>）</span>
         </label>
+
         <div class="input-group">
-            <p class="sub-text">1カブの<ruby>値段<rt>ねだん</rt></ruby></p>
+            <p class="sub-text">1カブの値段</p>
             <input type="text" id="buyPrice" placeholder="90" class="comma-input">
         </div>
         <div class="input-group">
-            <p class="sub-text"><ruby>持<rt>も</rt></ruby>てる<ruby>量<rt>りょう</rt></ruby>（1<ruby>列<rt>れつ</rt></ruby>＝10マス / <ruby>最大<rt>さいだい</rt></ruby>4<ruby>列<rt>れつ</rt></ruby>）</p>
+            <p class="sub-text">持てる量（1列＝10マス / 最大4列）</p>
             <div style="display: flex; align-items: center;">
-                <input type="text" id="rows" placeholder="2" class="comma-input"> <span style="font-size:0.8em; margin-left:5px;"><ruby>列<rt>れつ</rt></ruby></span>
+                <input type="text" id="rows" placeholder="2" class="comma-input"> <span style="font-size:0.8em; margin-left:5px;">列</span>
                 <span class="separator">＋</span>
                 <input type="text" id="slots" placeholder="5" class="comma-input"> <span style="font-size:0.8em; margin-left:5px;">マス</span>
             </div>
             <div id="maxAlert" style="color: #d32f2f; font-size: 0.7em; margin-top: 5px; display: none; font-weight: bold;">
-                ※4<ruby>列<rt>れつ</rt></ruby>（40マス）が<ruby>最大<rt>さいだい</rt></ruby>です
+                ※4列（40マス）が最大です
             </div>
         </div>
         <div class="result-card">
@@ -159,12 +213,10 @@
     </div>
 
     <div class="box sell">
-        <label>
-            <ruby>売値<rt>うりね</rt></ruby>
-            <span style="font-size: 0.7em; font-weight: normal;">（カブを<ruby>売<rt>う</rt></ruby>る<ruby>値段<rt>ねだん</rt></ruby>）</span>
-        </label>
+        <label><ruby>売値<rt>うりね</rt></ruby>
+        <span style="font-size: 0.7em; font-weight: normal;">（カブを<ruby>売<rt>う</rt></ruby>る<ruby>値段<rt>ねだん</rt></ruby>）</span></label>
         <div class="input-group">
-            <p class="sub-text">1カブの<ruby>値段<rt>ねだん</rt></ruby></p>
+            <p class="sub-text">1カブの値段</p>
             <input type="text" id="sellPrice" placeholder="660" class="comma-input">
         </div>
         <div class="result-card">
@@ -184,10 +236,8 @@
             <p class="sub-text"><ruby>目標<rt>もくひょう</rt></ruby>の<ruby>金額<rt>きんがく</rt></ruby></p>
             <input type="text" id="targetBank" placeholder="999,999,999" class="comma-input">
         </div>
-        
         <div class="result-card">
             <ruby>不足額<rt>ふそくがく</rt></ruby>：<span id="neededAmount" class="red-val">0</span> ベル
-            
             <div id="tripDisplay" class="trip-compare">
                 <div class="highlight-box">
                     <span class="sub-text">カバン<ruby>最大<rt>さいだい</rt></ruby></span>
@@ -200,8 +250,9 @@
                     <span class="trip-num"><span id="tripsCurrent">0</span><ruby>回<rt>かい</rt></ruby></span>
                 </div>
             </div>
-            <div id="tripAlert" class="highlight-box plan-style" style="display:none; background:#ffecb3; border-color:#ffa000; text-align:center;">
-                <span class="notice-text"><ruby>資金<rt>しきん</rt></ruby>が<ruby>足<rt>た</rt></ruby>りません！<br><ruby>下<rt>した</rt></ruby>のプランを<ruby>確認<rt>かくにん</rt></ruby>してね</span>
+            <div id="tripAlert" style="display:none;">
+                <span class="red-val" style="font-weight:bold;"><ruby>資金<rt>しきん</rt></ruby>が<ruby>足<rt>た</rt></ruby>りません！</span><br>
+                <ruby>下<rt>した</rt></ruby>のプランを<ruby>確認<rt>かくにん</rt></ruby>してね
             </div>
         </div>
     </div>
@@ -209,14 +260,18 @@
     <div class="box plan">
         <label>【わらしべ<ruby>長者<rt>ちょうじゃ</rt></ruby>プラン】</label>
         <div class="result-card">
-            <div class="highlight-box plan-style" id="planOutput">
-                <ruby>買値<rt>かいね</rt></ruby>、<ruby>売値<rt>うりね</rt></ruby>、<ruby>貯金<rt>ちょきん</rt></ruby>を<ruby>入<rt>い</rt></ruby>れてね
+            <div class="highlight-box plan-style plan-empty" id="planOutput">
+                <div class="empty-msg">
+                    <ruby>買値<rt>かいね</rt></ruby>・
+                    <ruby>売値<rt>うりね</rt></ruby>・
+                    <ruby>貯金<rt>ちょきん</rt></ruby>を<ruby>入<rt>い</rt></ruby>れてね
+                </div>
             </div>
         </div>
     </div>
 
     <div class="box atm">
-        <label>【ATM<ruby>入金補助<rt>にゅうきんほじょ</rt></ruby>】</label>
+        <label>【ATM <ruby>入金補助<rt>にゅうきんほじょ</rt></ruby>】</label>
         <div class="input-group">
             <p class="sub-text">99,000ベル × <ruby>袋数<rt>ふくろすう</rt></ruby></p>
             <input type="text" id="bags" placeholder="袋数" class="comma-input">
@@ -250,6 +305,15 @@ function parseNumber(str) {
     return Number(str.replace(/,/g, '')) || 0;
 }
 
+function setPlanEmptyState(isEmpty){
+    const plan = document.getElementById('planOutput');
+    if(isEmpty){
+        plan.classList.add('plan-empty');
+    }else{
+        plan.classList.remove('plan-empty');
+    }
+}
+
 function calc() {
     const buyVal = document.getElementById('buyPrice').value;
     const sellVal = document.getElementById('sellPrice').value;
@@ -268,7 +332,7 @@ function calc() {
         rowsInput.value = "4";
         slots = 0;
         slotsInput.value = "";
-        slotsInput.disabled = true; 
+        slotsInput.disabled = true;
         maxAlert.style.display = "block";
     } else {
         slotsInput.disabled = false;
@@ -288,7 +352,7 @@ function calc() {
     const totalCapacitySlots = (rows * 10) + slots;
     const capacityStocks = totalCapacitySlots * 100;
     const costCurrent = capacityStocks * bPrice;
-    
+
     document.getElementById('currentCapacityText').innerText = totalCapacitySlots;
     document.getElementById('totalStocks').innerText = capacityStocks.toLocaleString();
     document.getElementById('targetStocks').innerText = capacityStocks.toLocaleString();
@@ -301,26 +365,39 @@ function calc() {
     document.getElementById('neededAmount').innerText = needed.toLocaleString();
 
     let output = document.getElementById('planOutput');
-    
+
+    /* 入力前：1行＋縦中央 */
     if (buyVal === "" || sellVal === "" || bankVal === "") {
         document.getElementById('tripDisplay').style.display = "grid";
         document.getElementById('tripAlert').style.display = "none";
         document.getElementById('tripsFull').innerText = "0";
         document.getElementById('tripsCurrent').innerText = "0";
-        output.innerHTML = "<ruby>買値<rt>かいね</rt></ruby>、<ruby>売値<rt>うりね</rt></ruby>、<ruby>貯金<rt>ちょきん</rt></ruby>を<ruby>入<rt>い</rt></ruby>れてね";
+
+        setPlanEmptyState(true);
+        output.innerHTML = `
+          <div class="empty-msg">
+            <ruby>買値<rt>かいね</rt></ruby>・
+            <ruby>売値<rt>うりね</rt></ruby>・
+            <ruby>貯金<rt>ちょきん</rt></ruby>を<ruby>入<rt>い</rt></ruby>れてね
+          </div>
+        `;
         return;
     }
+
+    setPlanEmptyState(false);
 
     if (sPrice > bPrice) {
         let tempBank = currentBank;
         let stepCount = 0;
         let log = "";
-        
+
         while (tempBank < costCurrent && stepCount < 100) {
             stepCount++;
             let buyAmount = Math.floor(tempBank / bPrice);
             let profit = buyAmount * (sPrice - bPrice);
-            if (stepCount <= 3) log += `<li>${stepCount}回目：${buyAmount.toLocaleString()}カブ購入</li>`;
+            if (stepCount <= 3) {
+                log += `<li>${stepCount}<ruby>回目<rt>かいめ</rt></ruby>：${buyAmount.toLocaleString()}カブ<ruby>購入<rt>こうにゅう</rt></ruby></li>`;
+            }
             tempBank += profit;
         }
 
@@ -334,19 +411,38 @@ function calc() {
             document.getElementById('tripsCurrent').innerText = Math.ceil(needed / ((sPrice - bPrice) * capacityStocks)).toLocaleString();
         }
 
-        let message = `<div><b>カバン(${totalCapacitySlots}マス)</b>を満タンにする計画：</div>`;
+        /* カタカナ（カバン等）にふりがなは付けない */
+        let message = `<div><b>カバン(${totalCapacitySlots}マス)</b>を<ruby>満タン<rt>まんたん</rt></ruby>にする<ruby>計画<rt>けいかく</rt></ruby>：</div>`;
+
         if (stepCount === 0) {
-            message += `<div style="margin:10px 0;"><b class="blue-val">1回目からカバンを満タンにできます！</b></div>`;
+          message += `<div style="margin:10px 0;">
+            <b class="blue-val">1<ruby>回目<rt>かいめ</rt></ruby>からカバンを<ruby>満タン<rt>まんたん</rt></ruby>にできます！</b>
+          </div>`;
         } else {
-            if (stepCount > 3) log += `<li>...あと ${stepCount - 3} 回の往復 ...</li>`;
-            log += `<li>（3回目と同じように往復して資金を貯めます）</li>`;
-            message += `<ul class="step-list">${log}</ul>`;
-            message += `<div>あと <b class="red-val">${stepCount}</b> 往復でカバンがいっぱいになります。</div>`;
+          message += `<ul class="step-list">${log}</ul>`;
+
+          if (stepCount > 3) {
+            message += `
+              <div class="step-note">...あと ${stepCount - 3} <ruby>回<rt>かい</rt></ruby>の<ruby>往復<rt>おうふく</rt></ruby> ...</div>
+              <div class="step-note">（3<ruby>回目<rt>かいめ</rt></ruby>と<ruby>同<rt>おな</rt></ruby>じように<ruby>往復<rt>おうふく</rt></ruby>して<ruby>資金<rt>しきん</rt></ruby>を<ruby>貯<rt>た</rt></ruby>めます）</div>
+            `;
+          }
+
+          message += `<div>
+            あと <b class="red-val">${stepCount}</b> <ruby>往復<rt>おうふく</rt></ruby>でカバンがいっぱいになります。
+          </div>`;
         }
+
         let remainingNeeded = Math.max(0, targetBank - tempBank);
         let finalTrips = Math.ceil(remainingNeeded / ((sPrice - bPrice) * capacityStocks));
-        message += `<div style="margin-top:10px; border-top:1px solid #00897b; padding-top:10px;">目標達成までさらに <b class="red-val">${finalTrips}</b> 往復、<br>合計で <b style="font-size:1.4em;">${stepCount + finalTrips}</b> 往復必要です。</div>`;
+
+        message += `<div style="margin-top:10px; border-top:1px solid #00897b; padding-top:10px;">
+          <ruby>目標達成<rt>もくひょうたっせい</rt></ruby>までさらに <b class="red-val">${finalTrips}</b> <ruby>往復<rt>おうふく</rt></ruby>、<br>
+          <ruby>合計<rt>ごうけい</rt></ruby>で <b style="font-size:1.4em;">${stepCount + finalTrips}</b> <ruby>往復<rt>おうふく</rt></ruby><ruby>必要<rt>ひつよう</rt></ruby>です。
+        </div>`;
+
         output.innerHTML = message;
+
     } else {
         output.innerText = "売値は買値より高く設定してください。";
     }
