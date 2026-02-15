@@ -22,7 +22,6 @@
       margin:0;
     }
 
-    /* ふりがなOFF（rtだけ非表示） */
     body.no-ruby rt{ display:none; }
 
     .container{
@@ -645,7 +644,7 @@
   </div>
 
   <script>
-    const COOKIE_KEY = "kabutool_state_full_v5";
+    const COOKIE_KEY = "kabutool_state_full_v8";
 
     function setCookie(name, value, days){
       const d = new Date();
@@ -684,7 +683,6 @@
       return `${toComma(bags)}袋＋${toComma(rem)}ベル`;
     }
 
-    /* caret-safe formatter */
     let isComposing = false;
 
     function digitsLeftOfCaret(value, caret){
@@ -705,69 +703,125 @@
       let v = (str || "").replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
       return v.replace(/[^0-9]/g, "");
     }
-
-    // ★先頭0を残したままカンマ整形
     function formatDigitsWithCommas(digits){
       const s = String(digits || "");
       if(s === "") return "";
       return s.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-    // ★targetBankの桁数維持
-    let lastTargetLen = 0;
+    // ─────────────────────────────────────────────
+    // 目標金額：どこで削っても桁が落ちる／途中入れ替えは右0維持
+    // ─────────────────────────────────────────────
+    let targetFixedLen = 0;
+    let targetBefore = null;
 
-    function formatInputKeepCaret(el){
+    function captureTargetBeforeInput(e){
+      const el = e.target;
+      if(!el || el.id !== "targetBank") return;
+      targetBefore = {
+        inputType: e.inputType || "",
+        start: el.selectionStart ?? 0,
+        end: el.selectionEnd ?? 0,
+        value: el.value || "",
+        digits: normalizeDigits(el.value || "")
+      };
+    }
+
+    function isDeleteType(t){
+      return String(t || "").startsWith("delete");
+    }
+    function isInsertType(t){
+      return String(t || "").startsWith("insert");
+    }
+
+    function formatTargetKeepCaret(el){
       const rawBefore = el.value;
       const caretBefore = el.selectionStart ?? rawBefore.length;
 
       let v = rawBefore.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
       const digitIdx = digitsLeftOfCaret(v, caretBefore);
 
-      let rawDigits = v.replace(/[^0-9]/g, "");
-      let formatted = "";
+      const newDigitsRaw = normalizeDigits(v);
 
-      if(el.id === "targetBank"){
-        if(!lastTargetLen){
-          const initDigits = normalizeDigits(rawBefore);
-          lastTargetLen = initDigits ? initDigits.length : 9;
-        }
-
-        if(rawDigits === ""){
-          formatted = "";
-        }else{
-          if(rawDigits.length < lastTargetLen){
-            rawDigits = rawDigits.padStart(lastTargetLen, "0");
-          }
-          if(rawDigits.length > lastTargetLen){
-            lastTargetLen = rawDigits.length;
-          }
-          formatted = formatDigitsWithCommas(rawDigits);
-        }
-      }else{
-        const rawOnlyDigits = rawDigits;
-        formatted = rawOnlyDigits !== "" ? Number(rawOnlyDigits).toLocaleString() : "";
+      // 固定桁の初期値
+      if(!targetFixedLen){
+        targetFixedLen = newDigitsRaw ? newDigitsRaw.length : 9;
       }
+
+      // beforeinput情報が取れない環境もあるので、差分でも判定
+      const prevDigits = (targetBefore && typeof targetBefore.digits === "string") ? targetBefore.digits : null;
+      const prevLen = prevDigits ? prevDigits.length : targetFixedLen;
+      const nowLen  = newDigitsRaw.length;
+
+      const inputType = (targetBefore && targetBefore.inputType) ? targetBefore.inputType : "";
+      const deleting = isDeleteType(inputType) || (prevDigits !== null && nowLen < prevLen);
+
+      let nextDigits = newDigitsRaw;
+
+      if(nextDigits === ""){
+        el.value = "";
+        saveState({ targetBank: "" });
+        calc();
+        return;
+      }
+
+      if(deleting){
+        // どこで消しても桁を落とす（右0追加しない）
+        targetFixedLen = Math.max(1, nowLen);
+      }else{
+        // 入れ替え・入力は右0維持（桁が足りなければ0補充）
+        // さらに、桁が増えた入力はそのまま増やす
+        if(isInsertType(inputType) && nowLen > targetFixedLen) targetFixedLen = nowLen;
+        if(nowLen < targetFixedLen) nextDigits = nextDigits.padEnd(targetFixedLen, "0");
+        if(nextDigits.length > targetFixedLen) targetFixedLen = nextDigits.length;
+      }
+
+      const formatted = formatDigitsWithCommas(nextDigits);
+      el.value = formatted;
+
+      const newCaret = caretFromDigitIndex(formatted, digitIdx);
+      try { el.setSelectionRange(newCaret, newCaret); } catch(e){}
+
+      saveState({ targetBank: el.value });
+      calc();
+    }
+
+    function formatNormalKeepCaret(el){
+      const rawBefore = el.value;
+      const caretBefore = el.selectionStart ?? rawBefore.length;
+
+      let v = rawBefore.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+      const digitIdx = digitsLeftOfCaret(v, caretBefore);
+
+      const rawDigits = v.replace(/[^0-9]/g, "");
+      const formatted = rawDigits !== "" ? Number(rawDigits).toLocaleString() : "";
 
       el.value = formatted;
 
       const newCaret = caretFromDigitIndex(formatted, digitIdx);
       try { el.setSelectionRange(newCaret, newCaret); } catch(e){}
 
-      if(["buyPrice","sellPrice","currentBank","targetBank","rows","slots","bags"].includes(el.id)){
+      if(["buyPrice","sellPrice","currentBank","rows","slots","bags"].includes(el.id)){
         saveState({ [el.id]: el.value });
       }
       calc();
     }
 
+    // 全入力に共通（既存）
     document.querySelectorAll(".comma-input").forEach(el=>{
       el.addEventListener("compositionstart", ()=>{ isComposing = true; });
-      el.addEventListener("compositionend", ()=>{ isComposing = false; formatInputKeepCaret(el); });
-      el.addEventListener("input", ()=>{ if(!isComposing) formatInputKeepCaret(el); });
-      el.addEventListener("focus", ()=>{
-        if(el.id === "targetBank"){
-          const d = normalizeDigits(el.value);
-          if(d) lastTargetLen = d.length;
-        }
+      el.addEventListener("compositionend", ()=>{
+        isComposing = false;
+        if(el.id === "targetBank") formatTargetKeepCaret(el);
+        else formatNormalKeepCaret(el);
+      });
+      el.addEventListener("beforeinput", (e)=>{
+        if(el.id === "targetBank") captureTargetBeforeInput(e);
+      });
+      el.addEventListener("input", ()=>{
+        if(isComposing) return;
+        if(el.id === "targetBank") formatTargetKeepCaret(el);
+        else formatNormalKeepCaret(el);
       });
     });
 
@@ -777,7 +831,6 @@
       else plan.classList.remove("plan-empty");
     }
 
-    /* Counters */
     const buyTripEl  = document.getElementById("buyTripCount");
     const sellTripEl = document.getElementById("sellTripCount");
 
@@ -797,7 +850,6 @@
     document.getElementById("sellTripMinus").addEventListener("click", ()=> setCounter(sellTripEl, "sellTripCount", getCounter(sellTripEl)-1));
     document.getElementById("sellTripReset").addEventListener("click", ()=> setCounter(sellTripEl, "sellTripCount", 0));
 
-    /* Clear buttons */
     function clearField(id){
       const el = document.getElementById(id);
       el.value = "";
@@ -809,7 +861,8 @@
     document.getElementById("clearSell").addEventListener("click", ()=> clearField("sellPrice"));
     document.getElementById("clearCurrent").addEventListener("click", ()=> clearField("currentBank"));
     document.getElementById("clearTarget").addEventListener("click", ()=>{
-      lastTargetLen = 0;
+      targetFixedLen = 0;
+      targetBefore = null;
       clearField("targetBank");
     });
 
@@ -938,7 +991,6 @@
       saveState({ shortcutMemo: "" });
     });
 
-    /* Calc */
     function calc(){
       const buyVal    = document.getElementById("buyPrice").value;
       const sellVal   = document.getElementById("sellPrice").value;
@@ -998,7 +1050,6 @@
 
       document.getElementById("atmTotal").innerText = toComma(bags * 99000);
 
-      // ATM：資金がカバン満タン購入に届く時だけ計算
       const canFillBag = (bPrice > 0) && (totalCapacitySlots > 0) && (currentBank >= costCurrent);
       const depositSuggest = canFillBag ? Math.max(0, salesCurrent - costCurrent) : 0;
 
@@ -1108,14 +1159,12 @@
       planOut.innerHTML = message;
     }
 
-    /* Ruby toggle */
     const rubyBtn = document.getElementById("rubyToggle");
     rubyBtn.addEventListener("click", ()=>{
       document.body.classList.toggle("no-ruby");
       rubyBtn.textContent = document.body.classList.contains("no-ruby") ? "ふりがな：OFF" : "ふりがな：ON";
     });
 
-    /* init */
     (function init(){
       const st = loadState();
 
@@ -1141,7 +1190,7 @@
       const tb = document.getElementById("targetBank");
       if(tb){
         const d = normalizeDigits(tb.value);
-        if(d) lastTargetLen = d.length;
+        if(d) targetFixedLen = d.length;
       }
 
       calc();
@@ -1149,4 +1198,3 @@
   </script>
 </body>
 </html>
-
