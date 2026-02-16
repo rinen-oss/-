@@ -72,29 +72,25 @@
 
     .input-group{ margin-bottom: 14px; }
 
-    label{
-      display:block;
-      font-size:1.05em;
-      font-weight:800;
-      margin-bottom:10px;
-      line-height:1.25;
-    }
-    .label-flex{
+    /* 見出し行（labelは使わない：誤タップでボタン発火を防ぐ） */
+    .header-row{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:10px;
       flex-wrap:wrap;
+      margin-bottom:10px;
     }
-
-    .label-left{
+    .header-left{
       display:flex;
       flex-wrap:wrap;
       align-items:baseline;
       gap:8px;
+      font-size:1.05em;
+      font-weight:800;
+      line-height:1.25;
     }
-
-    .label-sub{
+    .header-sub{
       font-size:0.72em;
       font-weight:400;
       opacity:0.85;
@@ -193,6 +189,7 @@
       font-size:0.9em;
       white-space:nowrap;
       line-height:1.1;
+      touch-action: manipulation;
     }
     .btn.small{
       padding: 7px 12px;
@@ -270,7 +267,11 @@
       align-items:center;
       min-height:70px;
     }
-    #planOutput .empty-msg{ white-space:nowrap; }
+    /* ★nowrapをやめて、スマホで2行以上に折り返す */
+    #planOutput .empty-msg{
+      white-space:normal;
+      line-height:1.5;
+    }
 
     .atm-note{
       font-size:0.9em;
@@ -318,7 +319,6 @@
     }
 
     .goal .memo-row{ margin-bottom:10px; }
-    .goal .btn.small{ margin-left:auto; }
 
     .memo-white{
       background:#fff;
@@ -418,6 +418,27 @@
     .mono{
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
     }
+
+    /* ★スマホ誤タップ対策：クリアボタンを左詰めで“見出しの下”に落とす */
+    @media (max-width: 430px){
+      .header-row{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:8px;
+      }
+      .header-row .btn{
+        align-self:flex-start;
+      }
+
+      .goal .memo-row{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:8px;
+      }
+      .goal .memo-row .btn{
+        align-self:flex-start;
+      }
+    }
   </style>
 </head>
 
@@ -429,13 +450,13 @@
 
     <!-- 買値 -->
     <div class="box buy">
-      <label class="label-flex">
-        <span class="label-left">
+      <div class="header-row">
+        <div class="header-left">
           <ruby>買値<rt>かいね</rt></ruby>
-          <span class="label-sub">（カブを<ruby>買<rt>か</rt></ruby>う<ruby>値段<rt>ねだん</rt></ruby>）</span>
-        </span>
+          <span class="header-sub">（カブを<ruby>買<rt>か</rt></ruby>う<ruby>値段<rt>ねだん</rt></ruby>）</span>
+        </div>
         <button class="btn small danger" id="clearBuy" type="button"><ruby>買値<rt>かいね</rt></ruby>クリア</button>
-      </label>
+      </div>
 
       <div class="input-group">
         <p class="sub-text">1カブの<ruby>値段<rt>ねだん</rt></ruby></p>
@@ -467,13 +488,13 @@
 
     <!-- 売値 -->
     <div class="box sell">
-      <label class="label-flex">
-        <span class="label-left">
+      <div class="header-row">
+        <div class="header-left">
           <ruby>売値<rt>うりね</rt></ruby>
-          <span class="label-sub">（カブを<ruby>売<rt>う</rt></ruby>る<ruby>値段<rt>ねだん</rt></ruby>）</span>
-        </span>
+          <span class="header-sub">（カブを<ruby>売<rt>う</rt></ruby>る<ruby>値段<rt>ねだん</rt></ruby>）</span>
+        </div>
         <button class="btn small danger" id="clearSell" type="button"><ruby>売値<rt>うりね</rt></ruby>クリア</button>
-      </label>
+      </div>
 
       <div class="input-group">
         <p class="sub-text">1カブの<ruby>値段<rt>ねだん</rt></ruby></p>
@@ -492,7 +513,9 @@
 
     <!-- 目標 -->
     <div class="box goal">
-      <label>【<ruby>目標達成<rt>もくひょうたっせい</rt></ruby>への<ruby>道<rt>みち</rt></ruby>】</label>
+      <div class="header-left" style="margin-bottom:10px;">
+        【<ruby>目標達成<rt>もくひょうたっせい</rt></ruby>への<ruby>道<rt>みち</rt></ruby>】
+      </div>
 
       <div class="input-group">
         <div class="memo-row" style="justify-content:space-between;">
@@ -535,7 +558,7 @@
 
     <!-- わらしべ -->
     <div class="box plan">
-      <label>【わらしべ<ruby>長者<rt>ちょうじゃ</rt></ruby>プラン】</label>
+      <div class="header-left" style="margin-bottom:10px;">【わらしべ<ruby>長者<rt>ちょうじゃ</rt></ruby>プラン】</div>
       <div class="result-card">
         <div class="plan-style plan-empty" id="planOutput">
           <div class="empty-msg">
@@ -549,7 +572,7 @@
 
     <!-- ATM -->
     <div class="box atm">
-      <label>【ATM <ruby>入金補助<rt>にゅうきんほじょ</rt></ruby>】</label>
+      <div class="header-left" style="margin-bottom:10px;">【ATM <ruby>入金補助<rt>にゅうきんほじょ</rt></ruby>】</div>
 
       <div class="atm-note">
         <b>
@@ -577,7 +600,7 @@
 
     <!-- メモ -->
     <div class="box memo">
-      <label>【📝メモ】</label>
+      <div class="header-left" style="margin-bottom:10px;">【📝メモ】</div>
 
       <div class="memo-white" style="margin-bottom:10px;">
         <div class="memo-mini">
@@ -644,7 +667,7 @@
   </div>
 
   <script>
-    const COOKIE_KEY = "kabutool_state_full_v8";
+    const COOKIE_KEY = "kabutool_state_full_v9";
 
     function setCookie(name, value, days){
       const d = new Date();
@@ -709,9 +732,7 @@
       return s.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
-    // ─────────────────────────────────────────────
     // 目標金額：どこで削っても桁が落ちる／途中入れ替えは右0維持
-    // ─────────────────────────────────────────────
     let targetFixedLen = 0;
     let targetBefore = null;
 
@@ -743,12 +764,10 @@
 
       const newDigitsRaw = normalizeDigits(v);
 
-      // 固定桁の初期値
       if(!targetFixedLen){
         targetFixedLen = newDigitsRaw ? newDigitsRaw.length : 9;
       }
 
-      // beforeinput情報が取れない環境もあるので、差分でも判定
       const prevDigits = (targetBefore && typeof targetBefore.digits === "string") ? targetBefore.digits : null;
       const prevLen = prevDigits ? prevDigits.length : targetFixedLen;
       const nowLen  = newDigitsRaw.length;
@@ -766,11 +785,8 @@
       }
 
       if(deleting){
-        // どこで消しても桁を落とす（右0追加しない）
         targetFixedLen = Math.max(1, nowLen);
       }else{
-        // 入れ替え・入力は右0維持（桁が足りなければ0補充）
-        // さらに、桁が増えた入力はそのまま増やす
         if(isInsertType(inputType) && nowLen > targetFixedLen) targetFixedLen = nowLen;
         if(nowLen < targetFixedLen) nextDigits = nextDigits.padEnd(targetFixedLen, "0");
         if(nextDigits.length > targetFixedLen) targetFixedLen = nextDigits.length;
@@ -807,7 +823,6 @@
       calc();
     }
 
-    // 全入力に共通（既存）
     document.querySelectorAll(".comma-input").forEach(el=>{
       el.addEventListener("compositionstart", ()=>{ isComposing = true; });
       el.addEventListener("compositionend", ()=>{
