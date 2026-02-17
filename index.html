@@ -6,438 +6,188 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <style>
     :root{
-      --bg: #fdfae6;
-      --text: #4a3c31;
-      --accent: #789440;
-      --shadow: 0 10px 30px rgba(0,0,0,0.08);
+      --bg:#fdfae6; --text:#4a3c31; --accent:#789440; --shadow:0 10px 30px rgba(0,0,0,.08);
     }
+    body{font-family:'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);display:flex;justify-content:center;padding:20px;margin:0;}
+    body.no-ruby rt{display:none;}
+    .container{background:#fff;padding:25px;border-radius:20px;box-shadow:var(--shadow);width:100%;max-width:480px;box-sizing:border-box;}
+    h2{text-align:center;color:var(--accent);margin:6px 0 18px;line-height:1.25;font-size:1.22em;letter-spacing:.01em;}
+    #rubyToggle{display:block;margin:0 auto 15px;padding:6px 14px;border-radius:999px;border:1px solid var(--accent);background:#fff;cursor:pointer;font-size:.85em;line-height:1.2;}
+    .box{margin-bottom:15px;padding:20px;border-radius:15px;border-left:12px solid;box-sizing:border-box;}
+    .buy{border-color:#ffd54f;background:#fffde7;}
+    .sell{border-color:#81c784;background:#f1f8e9;}
+    .goal{border-color:#ff8a65;background:#fff3e0;}
+    .plan{border-color:#4db6ac;background:#e0f2f1;}
+    .atm{border-color:#d1c4e9;background:#f3e5f5;}
+    .memo{border-color:#90a4ae;background:#eceff1;}
 
-    body{
-      font-family: 'Helvetica Neue', Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      display:flex;
-      justify-content:center;
-      padding:20px;
-      margin:0;
-    }
+    .input-group{margin-bottom:14px;}
+    .header-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+    .header-left{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;font-size:1.05em;font-weight:800;line-height:1.25;}
+    .header-sub{font-size:.72em;font-weight:400;opacity:.85;}
+    ruby{font-style:normal;line-height:1.15;ruby-position:over;ruby-align:center;}
+    rt{font-size:.55em;font-weight:400;line-height:1;}
+    .sub-text{font-size:.85em;color:#795548;margin:0 0 6px;line-height:1.25;}
 
-    body.no-ruby rt{ display:none; }
+    input[type="text"]{width:100%;padding:12px;border:2px solid #eee;border-radius:12px;font-size:18px;outline:none;background:#fff;color:var(--text);text-align:right;box-sizing:border-box;line-height:1.2;}
+    input[type="text"]:focus{border-color:var(--accent);}
+    input[type="text"]:disabled{background:#eceff1;color:transparent;border-color:#cfd8dc;cursor:not-allowed;}
+    input[type="text"]:disabled::placeholder{color:transparent;}
+    ::placeholder{color:#ccc;opacity:1;}
 
-    .container{
-      background:#fff;
-      padding:25px;
-      border-radius:20px;
-      box-shadow: var(--shadow);
-      width:100%;
-      max-width:480px;
-      box-sizing:border-box;
-    }
+    textarea{width:100%;border:2px solid #e0e0e0;border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.5;resize:vertical;background:#fff;color:var(--text);outline:none;box-sizing:border-box;}
+    textarea:focus{border-color:#90a4ae;}
 
-    h2{
-      text-align:center;
-      color: var(--accent);
-      margin: 6px 0 18px;
-      line-height:1.25;
-      font-size:1.22em;
-      letter-spacing:.01em;
-    }
+    .result-card{background:#fff;padding:14px;border-radius:12px;margin-top:10px;font-weight:700;line-height:1.55;box-sizing:border-box;border:1px solid rgba(0,0,0,.05);}
+    .red-val{color:#d32f2f;font-size:1.25em;}
+    .blue-val{color:#03a9f4;}
+    .separator{font-size:1.2em;font-weight:800;margin:0 10px;color:#795548;}
 
-    #rubyToggle{
-      display:block;
-      margin: 0 auto 15px;
-      padding: 6px 14px;
-      border-radius:999px;
-      border:1px solid var(--accent);
-      background:#fff;
-      cursor:pointer;
-      font-size:0.85em;
-      line-height:1.2;
-    }
+    .cap-row{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;}
+    .cap-row .cap-input{width:84px;min-width:72px;max-width:96px;}
+    .cap-unit{font-size:.85em;white-space:nowrap;}
+    #maxAlert{color:#d32f2f;font-size:.75em;margin-top:6px;display:none;font-weight:800;line-height:1.2;}
 
-    .box{
-      margin-bottom:15px;
-      padding:20px;
-      border-radius:15px;
-      border-left:12px solid;
-      box-sizing:border-box;
-    }
+    .btn{border:1px solid #90a4ae;background:#fff;border-radius:10px;padding:8px 10px;cursor:pointer;font-size:.9em;white-space:nowrap;line-height:1.1;touch-action:manipulation;}
+    .btn.small{padding:7px 12px;border-radius:999px;}
+    .btn.primary{border-color:#607d8b;}
+    .btn.danger{border-color:#c62828;color:#c62828;}
 
-    .buy { border-color: #ffd54f; background-color: #fffde7; }
-    .sell{ border-color: #81c784; background-color: #f1f8e9; }
-    .goal{ border-color: #ff8a65; background-color: #fff3e0; }
-    .plan{ border-color: #4db6ac; background-color: #e0f2f1; }
-    .atm { border-color: #d1c4e9; background-color: #f3e5f5; }
-    .memo{ border-color: #90a4ae; background-color: #eceff1; }
+    .trip-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+    .highlight-box{background:#fff9c4;padding:10px;border-radius:8px;text-align:center;border:2px dashed #ffb300;display:flex;flex-direction:column;justify-content:center;min-height:80px;box-sizing:border-box;line-height:1.25;}
+    .highlight-box.small{background:#f0f4c3;border-color:#afb42b;}
+    .trip-num{font-size:1.35em;color:#e64a19;display:block;}
+    .capacity-label{font-size:.75em;color:#558b2f;margin-top:2px;}
+    #tripAlert{background:#ffecb3;border-color:#ffa000;text-align:center;padding:14px;border-radius:12px;border:2px dashed #ffa000;margin-top:10px;line-height:1.45;display:none;box-sizing:border-box;}
 
-    .input-group{ margin-bottom: 14px; }
+    .plan .result-card{padding:12px;}
+    .plan-style{background:#b2dfdb;border:2px dashed #00897b;border-radius:12px;padding:12px 14px;width:100%;box-sizing:border-box;text-align:left;line-height:1.35;overflow:hidden;word-break:normal;overflow-wrap:anywhere;}
+    #planOutput ul{margin:8px 0 0;padding-left:1.15em;}
+    #planOutput li{margin:2px 0;line-height:1.35;}
+    #planOutput .plan-hr{border:0;border-top:1px solid rgba(0,137,123,.35);margin:10px 0;}
+    #planOutput.plan-empty{display:flex;align-items:center;min-height:70px;}
+    #planOutput .empty-msg{white-space:normal;line-height:1.5;}
 
-    /* 見出し行（labelは使わない：誤タップでボタン発火を防ぐ） */
-    .header-row{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-bottom:10px;
-    }
-    .header-left{
-      display:flex;
-      flex-wrap:wrap;
-      align-items:baseline;
-      gap:8px;
-      font-size:1.05em;
-      font-weight:800;
-      line-height:1.25;
-    }
-    .header-sub{
-      font-size:0.72em;
-      font-weight:400;
-      opacity:0.85;
-    }
-
-    ruby{
-      font-style: normal;
-      line-height: 1.15;
-      ruby-position: over;
-      ruby-align: center;
-    }
-    rt{
-      font-size:0.55em;
-      font-weight:400;
-      line-height: 1;
-    }
-
-    .sub-text{
-      font-size:0.85em;
-      color:#795548;
-      margin:0 0 6px;
-      line-height:1.25;
-    }
-
-    input[type="text"]{
-      width:100%;
+    /* 対価（枠内で完結） */
+    .reward-box{
+      margin-top:10px;
       padding:12px;
-      border:2px solid #eee;
       border-radius:12px;
-      font-size:18px;
-      outline:none;
+      border:2px dashed rgba(0,0,0,.12);
       background:#fff;
-      color:var(--text);
-      text-align:right;
       box-sizing:border-box;
-      line-height:1.2;
     }
-
-    input[type="text"]:focus{ border-color: var(--accent); }
-
-    input[type="text"]:disabled{
-      background:#eceff1;
-      color: transparent;
-      border-color:#cfd8dc;
-      cursor:not-allowed;
-    }
-    input[type="text"]:disabled::placeholder{ color:transparent; }
-    ::placeholder{ color:#ccc; opacity:1; }
-
-    .result-card{
-      background:#fff;
-      padding: 14px 14px;
-      border-radius:12px;
-      margin-top: 10px;
-      font-weight:700;
-      line-height:1.55;
-      box-sizing:border-box;
-      border:1px solid rgba(0,0,0,0.05);
-    }
-
-    .red-val{ color:#d32f2f; font-size:1.25em; }
-    .blue-val{ color:#03a9f4; }
-    .separator{ font-size:1.2em; font-weight:800; margin:0 10px; color:#795548; }
-
-    .cap-row{
+    .reward-head{
       display:flex;
       align-items:center;
-      gap:8px;
-      flex-wrap:nowrap;
-    }
-    .cap-row .cap-input{
-      width:84px;
-      min-width:72px;
-      max-width:96px;
-    }
-    .cap-unit{
-      font-size:0.85em;
-      white-space:nowrap;
-    }
-
-    #maxAlert{
-      color:#d32f2f;
-      font-size:0.75em;
-      margin-top:6px;
-      display:none;
-      font-weight:800;
-      line-height:1.2;
-    }
-
-    .btn{
-      border:1px solid #90a4ae;
-      background:#fff;
-      border-radius:10px;
-      padding: 8px 10px;
-      cursor:pointer;
-      font-size:0.9em;
-      white-space:nowrap;
-      line-height:1.1;
-      touch-action: manipulation;
-    }
-    .btn.small{
-      padding: 7px 12px;
-      border-radius:999px;
-    }
-    .btn.primary{ border-color:#607d8b; }
-    .btn.danger{ border-color:#c62828; color:#c62828; }
-
-    .trip-compare{
-      display:grid;
-      grid-template-columns:1fr 1fr;
+      justify-content:space-between;
       gap:10px;
-      margin-top:10px;
+      flex-wrap:wrap;
     }
-    .highlight-box{
-      background:#fff9c4;
-      padding:10px;
-      border-radius:8px;
-      text-align:center;
-      border:2px dashed #ffb300;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      min-height:80px;
-      box-sizing:border-box;
+    .reward-head-left{
+      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    }
+    .reward-head input[type="checkbox"]{
+      width:20px;height:20px;accent-color:var(--accent);cursor:pointer;flex:0 0 auto;
+    }
+    .reward-title{
+      font-weight:900;
+      user-select:none;
+      cursor:pointer;
       line-height:1.25;
     }
-    .highlight-box.small{ background:#f0f4c3; border-color:#afb42b; }
-    .trip-num{ font-size:1.35em; color:#e64a19; display:block; }
-    .capacity-label{ font-size:0.75em; color:#558b2f; margin-top:2px; }
+    .reward-panel{display:none;margin-top:10px;}
+    .reward-panel.open{display:block;}
 
-    #tripAlert{
-      background:#ffecb3;
-      border-color:#ffa000;
-      text-align:center;
-      padding: 14px;
+    .reward-item{
+      border:2px dashed rgba(120,148,64,.28);
+      background:#fbfff1;
       border-radius:12px;
-      border:2px dashed #ffa000;
-      margin-top:10px;
-      line-height:1.45;
+      padding:10px 12px;
+      box-sizing:border-box;
+      margin-top:8px;
+    }
+    .reward-item-head{
+      display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    }
+    .reward-item-left{
+      display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    }
+    .reward-item-head input[type="checkbox"]{
+      width:20px;height:20px;accent-color:var(--accent);cursor:pointer;flex:0 0 auto;
+    }
+    .reward-item .label{
+      font-weight:900; user-select:none; cursor:pointer;
+    }
+    .reward-item.filled{border-color:rgba(120,148,64,.55);background:#f4ffe2;}
+    .reward-fields{margin-top:8px;display:none;}
+    .reward-fields.open{display:block;}
+
+    .reward-smallnote{margin-top:8px;font-size:.86em;color:#6d4c41;line-height:1.45;opacity:.92;}
+
+    /* 買値：対価（ベル）支払ありの場合（ベル入力がある時だけ表示） */
+    .reward-result{
       display:none;
-      box-sizing:border-box;
-    }
-
-    .plan .result-card{ padding: 12px; }
-    .plan-style{
-      background:#b2dfdb;
-      border:2px dashed #00897b;
+      margin-top:10px;
+      padding:12px;
       border-radius:12px;
-      padding: 12px 14px;
-      width:100%;
-      box-sizing:border-box;
-      text-align:left;
-      line-height:1.35;
-      overflow:hidden;
-      word-break: normal;
-      overflow-wrap: anywhere;
-    }
-    #planOutput{ line-break: strict; }
-    #planOutput ul{
-      margin: 8px 0 0;
-      padding-left: 1.15em;
-    }
-    #planOutput li{
-      margin: 2px 0;
-      line-height: 1.35;
-    }
-    #planOutput .plan-hr{
-      border:0;
-      border-top: 1px solid rgba(0,137,123,0.35);
-      margin: 10px 0;
-    }
-    #planOutput.plan-empty{
-      display:flex;
-      align-items:center;
-      min-height:70px;
-    }
-    /* ★nowrapをやめて、スマホで2行以上に折り返す */
-    #planOutput .empty-msg{
-      white-space:normal;
-      line-height:1.5;
-    }
-
-    .atm-note{
-      font-size:0.9em;
-      color:#5e35b1;
-      line-height:1.5;
-      margin-top:8px;
-      font-weight:700;
-    }
-    .atm-line{
-      margin-top:8px;
-      padding:10px 12px;
+      border:2px dashed rgba(255,183,0,.55);
       background:#fff;
-      border-radius:12px;
-      border:2px dashed #d1c4e9;
+      box-sizing:border-box;
       line-height:1.55;
-      box-sizing:border-box;
+    }
+    .reward-result.open{display:block;}
+
+    /* ATM */
+    .atm-note{font-size:.9em;color:#5e35b1;line-height:1.5;margin-top:8px;font-weight:700;}
+    .atm-note-sub{font-weight:400;}
+    .atm-line{margin-top:8px;padding:10px 12px;background:#fff;border-radius:12px;border:2px dashed #d1c4e9;line-height:1.55;box-sizing:border-box;}
+    .atm-subline{margin-top:8px;padding-top:8px;border-top:1px dashed rgba(103,58,183,.25);font-size:.92em;color:#4a148c;line-height:1.55;display:none;}
+    .atm-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid rgba(103,58,183,.35);background:#f7f2ff;font-size:.9em;line-height:1.2;margin:6px 8px 0 0;max-width:100%;box-sizing:border-box;}
+    .atm-chip b{font-weight:900;}
+    .atm-chip .mono{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+    .memo-mini{font-size:.92em;color:#455a64;line-height:1.5;}
+    .memo-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .memo-white{background:#fff;border-radius:12px;border:2px dashed #c0c6cc;padding:10px 12px;box-sizing:border-box;}
+    .counter{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .counter .val{min-width:64px;text-align:center;font-size:1.2em;color:#37474f;font-weight:800;background:#fff;border:2px dashed #90a4ae;border-radius:12px;padding:6px 10px;box-sizing:border-box;}
+
+    .shortcut-box{margin-top:12px;background:#fff;border-radius:12px;border:2px dashed #90a4ae;padding:12px;box-sizing:border-box;}
+    .shortcut-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
+    .shortcut-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .shortcut-item{border:1px solid rgba(0,0,0,.10);border-radius:12px;padding:10px;background:#fafafa;box-sizing:border-box;}
+    .shortcut-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
+    .dir{font-weight:900;font-size:1.05em;white-space:nowrap;}
+    .tool-view{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .tool-img{width:34px;height:34px;object-fit:contain;background:#fff;border-radius:8px;border:1px solid rgba(0,0,0,.08);padding:4px;box-sizing:border-box;}
+    select{width:100%;padding:10px 12px;border-radius:12px;border:2px solid #e0e0e0;background:#fff;font-size:14px;box-sizing:border-box;outline:none;}
+    select:focus{border-color:#90a4ae;}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
+
+    /* 目標：ラベル行に余白（入力とボタンが詰まるのを防ぐ） */
+    .goal .input-group .memo-row{margin-bottom:10px;}
+    .goal .input-group .memo-row .btn{margin-top:4px;}
+
+    /* ふりがなOFF時：見出しの変な空白を消す（【目標達成 への 道】等） */
+    body.no-ruby .header-left{gap:0;}
+    body.no-ruby .header-left .header-sub{margin-left:6px;}
+    body.no-ruby .goal .header-left,
+    body.no-ruby .plan .header-left{
+      letter-spacing:0;
+      word-spacing:0;
+      gap:0;
+    }
+    body.no-ruby .goal .header-left ruby,
+    body.no-ruby .plan .header-left ruby{
+      margin-right:0;
     }
 
-    textarea{
-      width:100%;
-      border:2px solid #e0e0e0;
-      border-radius:12px;
-      padding:10px 12px;
-      font-size:14px;
-      line-height:1.5;
-      resize:vertical;
-      background:#fff;
-      color:var(--text);
-      outline:none;
-      box-sizing:border-box;
-    }
-    textarea:focus{ border-color:#90a4ae; }
-
-    .memo-mini{
-      font-size:0.92em;
-      color:#455a64;
-      line-height:1.5;
-    }
-
-    .memo-row{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-    }
-
-    .goal .memo-row{ margin-bottom:10px; }
-
-    .memo-white{
-      background:#fff;
-      border-radius:12px;
-      border:2px dashed #c0c6cc;
-      padding:10px 12px;
-      box-sizing:border-box;
-    }
-
-    .counter{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .counter .val{
-      min-width:64px;
-      text-align:center;
-      font-size:1.2em;
-      color:#37474f;
-      font-weight:800;
-      background:#fff;
-      border:2px dashed #90a4ae;
-      border-radius:12px;
-      padding:6px 10px;
-      box-sizing:border-box;
-    }
-
-    .shortcut-box{
-      margin-top:12px;
-      background:#fff;
-      border-radius:12px;
-      border:2px dashed #90a4ae;
-      padding: 12px;
-      box-sizing:border-box;
-    }
-    .shortcut-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-      margin-bottom:10px;
-    }
-    .shortcut-grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-    }
-    .shortcut-item{
-      border:1px solid rgba(0,0,0,0.10);
-      border-radius:12px;
-      padding:10px;
-      background:#fafafa;
-      box-sizing:border-box;
-    }
-    .shortcut-top{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:8px;
-    }
-    .dir{
-      font-weight:900;
-      font-size:1.05em;
-      white-space:nowrap;
-    }
-    .tool-view{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-    .tool-img{
-      width:34px;
-      height:34px;
-      object-fit:contain;
-      background:#fff;
-      border-radius:8px;
-      border:1px solid rgba(0,0,0,0.08);
-      padding:4px;
-      box-sizing:border-box;
-    }
-    select{
-      width: 100%;
-      padding: 10px 12px;
-      border-radius: 12px;
-      border: 2px solid #e0e0e0;
-      background:#fff;
-      font-size: 14px;
-      box-sizing:border-box;
-      outline:none;
-    }
-    select:focus{ border-color:#90a4ae; }
-
-    .mono{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    }
-
-    /* ★スマホ誤タップ対策：クリアボタンを左詰めで“見出しの下”に落とす */
-    @media (max-width: 430px){
-      .header-row{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:8px;
-      }
-      .header-row .btn{
-        align-self:flex-start;
-      }
-
-      .goal .memo-row{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:8px;
-      }
-      .goal .memo-row .btn{
-        align-self:flex-start;
-      }
+    @media (max-width:430px){
+      .header-row{flex-direction:column;align-items:flex-start;gap:8px;}
+      .header-row .btn{align-self:flex-start;}
+      .goal .memo-row{flex-direction:column;align-items:flex-start;gap:8px;}
+      .goal .memo-row .btn{align-self:flex-start;}
     }
   </style>
 </head>
@@ -445,7 +195,6 @@
 <body>
   <div class="container">
     <h2>カブ価計算・利益計算ツール</h2>
-
     <button id="rubyToggle" type="button">ふりがな：ON</button>
 
     <!-- 買値 -->
@@ -468,21 +217,90 @@
         <div class="cap-row">
           <input type="text" id="rows" placeholder="2" class="comma-input cap-input" inputmode="numeric" />
           <span class="cap-unit"><ruby>列<rt>れつ</rt></ruby></span>
-
           <span class="separator">＋</span>
-
           <input type="text" id="slots" placeholder="5" class="comma-input cap-input" inputmode="numeric" />
           <span class="cap-unit">マス</span>
         </div>
         <div id="maxAlert">※4<ruby>列<rt>れつ</rt></ruby>（40マス）が<ruby>最大<rt>さいだい</rt></ruby>です</div>
       </div>
 
-      <div class="result-card">
+      <div class="result-card" id="buyBaseResult">
         <ruby>合計<rt>ごうけい</rt></ruby>：<span id="totalStocks">0</span> カブ<br />
         <ruby>支払額<rt>しはらいがく</rt></ruby>：<span id="cost" class="red-val">0</span> ベル<br />
         <span class="memo-mini">
           <ruby>支払<rt>しはら</rt></ruby>のベル<ruby>袋表記<rt>ぶくろひょうき</rt></ruby>：<span class="mono"><span id="costBags">0袋＋0ベル</span></span>
         </span>
+
+        <!-- ベル対価がある時だけ -->
+        <div class="reward-result" id="buyRewardResult">
+          <div style="font-weight:900;margin-bottom:6px;">対価ベル支払ありの場合</div>
+          <ruby>支払額<rt>しはらいがく</rt></ruby>：<span id="costWithReward" class="red-val">0</span> ベル<br />
+          <span class="memo-mini">
+            <ruby>支払<rt>しはら</rt></ruby>のベル<ruby>袋表記<rt>ぶくろひょうき</rt></ruby>：<span class="mono"><span id="costWithRewardBags">0袋＋0ベル</span></span>
+          </span>
+        </div>
+      </div>
+
+      <!-- 対価（買う時）：枠内で完結 -->
+      <div class="reward-box">
+        <div class="reward-head">
+          <div class="reward-head-left">
+            <input type="checkbox" id="buyRewardEnabled" />
+            <label class="reward-title" for="buyRewardEnabled"><ruby>対価支払<rt>たいかしはら</rt></ruby>いあり（<ruby>買<rt>か</rt></ruby>う<ruby>時<rt>とき</rt></ruby>）</label>
+          </div>
+        </div>
+
+        <div class="reward-panel" id="buyRewardPanel">
+          <!-- マイチケ -->
+          <div class="reward-item" id="buyItemTickets">
+            <div class="reward-item-head">
+              <div class="reward-item-left">
+                <input type="checkbox" id="buyChkTickets" />
+                <label class="label" for="buyChkTickets">マイチケ</label>
+              </div>
+            </div>
+            <div class="reward-fields" id="buyFieldsTickets">
+              <p class="sub-text" style="margin-top:8px;"><b>マイチケ</b> ◯<ruby>枚<rt>まい</rt></ruby></p>
+              <input type="text" id="buyRewardTickets" placeholder="0" class="comma-input" inputmode="numeric" />
+            </div>
+          </div>
+
+          <!-- ベル -->
+          <div class="reward-item" id="buyItemBells">
+            <div class="reward-item-head">
+              <div class="reward-item-left">
+                <input type="checkbox" id="buyChkBells" />
+                <label class="label" for="buyChkBells"><ruby>ベル<rt>べる</rt></ruby></label>
+              </div>
+            </div>
+            <div class="reward-fields" id="buyFieldsBells">
+              <p class="sub-text" style="margin-top:8px;"><b><ruby>ベル<rt>べる</rt></ruby></b> ◯<ruby>袋<rt>ふくろ</rt></ruby> ＋ ◯ベル</p>
+              <div class="cap-row">
+                <input type="text" id="buyRewardFullBags" placeholder="0" class="comma-input cap-input" inputmode="numeric" />
+                <span class="cap-unit"><ruby>袋<rt>ふくろ</rt></ruby></span>
+                <span class="separator">＋</span>
+                <input type="text" id="buyRewardBells" placeholder="0" class="comma-input cap-input" inputmode="numeric" />
+                <span class="cap-unit">ベル</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 他アイテム -->
+          <div class="reward-item" id="buyItemOther">
+            <div class="reward-item-head">
+              <div class="reward-item-left">
+                <input type="checkbox" id="buyChkOther" />
+                <label class="label" for="buyChkOther">他アイテム</label>
+              </div>
+            </div>
+            <div class="reward-fields" id="buyFieldsOther">
+              <p class="sub-text" style="margin-top:8px;"><b>他アイテム</b></p>
+              <textarea id="buyRewardOther" rows="2" placeholder="例：金鉱石×2、家具、素材 など"></textarea>
+            </div>
+          </div>
+
+          <div class="reward-smallnote">※ここはメモ用途（ATM補助の差し引き対象は「売る時」のベルだけ）</div>
+        </div>
       </div>
     </div>
 
@@ -499,6 +317,68 @@
       <div class="input-group">
         <p class="sub-text">1カブの<ruby>値段<rt>ねだん</rt></ruby></p>
         <input type="text" id="sellPrice" placeholder="660" class="comma-input" inputmode="numeric" />
+      </div>
+
+      <!-- 対価（売る時）：枠内で完結 -->
+      <div class="reward-box">
+        <div class="reward-head">
+          <div class="reward-head-left">
+            <input type="checkbox" id="sellRewardEnabled" />
+            <label class="reward-title" for="sellRewardEnabled"><ruby>対価受取<rt>たいかうけと</rt></ruby>りあり（<ruby>売<rt>う</rt></ruby>る<ruby>時<rt>とき</rt></ruby>）</label>
+          </div>
+        </div>
+
+        <div class="reward-panel" id="sellRewardPanel">
+          <!-- マイチケ -->
+          <div class="reward-item" id="sellItemTickets">
+            <div class="reward-item-head">
+              <div class="reward-item-left">
+                <input type="checkbox" id="sellChkTickets" />
+                <label class="label" for="sellChkTickets">マイチケ</label>
+              </div>
+            </div>
+            <div class="reward-fields" id="sellFieldsTickets">
+              <p class="sub-text" style="margin-top:8px;"><b>マイチケ</b> ◯<ruby>枚<rt>まい</rt></ruby></p>
+              <input type="text" id="sellRewardTickets" placeholder="0" class="comma-input" inputmode="numeric" />
+            </div>
+          </div>
+
+          <!-- ベル -->
+          <div class="reward-item" id="sellItemBells">
+            <div class="reward-item-head">
+              <div class="reward-item-left">
+                <input type="checkbox" id="sellChkBells" />
+                <label class="label" for="sellChkBells"><ruby>ベル<rt>べる</rt></ruby>（ATM補助で差し引き）</label>
+              </div>
+            </div>
+            <div class="reward-fields" id="sellFieldsBells">
+              <p class="sub-text" style="margin-top:8px;"><b><ruby>ベル<rt>べる</rt></ruby></b> ◯<ruby>袋<rt>ふくろ</rt></ruby> ＋ ◯ベル</p>
+              <div class="cap-row">
+                <input type="text" id="sellRewardFullBags" placeholder="0" class="comma-input cap-input" inputmode="numeric" />
+                <span class="cap-unit"><ruby>袋<rt>ふくろ</rt></ruby></span>
+                <span class="separator">＋</span>
+                <input type="text" id="sellRewardBells" placeholder="0" class="comma-input cap-input" inputmode="numeric" />
+                <span class="cap-unit">ベル</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 他アイテム -->
+          <div class="reward-item" id="sellItemOther">
+            <div class="reward-item-head">
+              <div class="reward-item-left">
+                <input type="checkbox" id="sellChkOther" />
+                <label class="label" for="sellChkOther">他アイテム</label>
+              </div>
+            </div>
+            <div class="reward-fields" id="sellFieldsOther">
+              <p class="sub-text" style="margin-top:8px;"><b>他アイテム</b></p>
+              <textarea id="sellRewardOther" rows="2" placeholder="例：DIYレシピ、素材、家具 など"></textarea>
+            </div>
+          </div>
+
+          <div class="reward-smallnote">※マイチケと他アイテムは表示用（ATM入金総額に反映しない）</div>
+        </div>
       </div>
 
       <div class="result-card">
@@ -579,13 +459,24 @@
           <ruby>設定<rt>せってい</rt></ruby>のカバン<ruby>満タン<rt>まんたん</rt></ruby>（<span id="atmCapacityText">0</span>マス）
           <ruby>購入<rt>こうにゅう</rt></ruby>に<ruby>届<rt>とど</rt></ruby>く<ruby>時<rt>とき</rt></ruby>だけ<ruby>計算<rt>けいさん</rt></ruby>
         </b><br>
-        ※「持てる<ruby>量<rt>りょう</rt></ruby>（<ruby>列<rt>れつ</rt></ruby>＋マス）」の<ruby>値<rt>あたい</rt></ruby>で<ruby>満タン<rt>まんたん</rt></ruby>が<ruby>決<rt>き</rt></ruby>まります<br>
-        （4<ruby>列<rt>れつ</rt></ruby>なら40マス<ruby>固定<rt>こてい</rt></ruby>）
+        <span class="atm-note-sub">
+          ※「持てる<ruby>量<rt>りょう</rt></ruby>（<ruby>列<rt>れつ</rt></ruby>＋マス）」の<ruby>値<rt>あたい</rt></ruby>で<ruby>満タン<rt>まんたん</rt></ruby>が<ruby>決<rt>き</rt></ruby>まります<br>
+          （4<ruby>列<rt>れつ</rt></ruby>なら40マス<ruby>固定<rt>こてい</rt></ruby>）
+        </span>
       </div>
 
       <div class="atm-line">
-        <div><b><ruby>入金目安<rt>にゅうきんめやす</rt></ruby>：</b><span class="mono"><span id="atmSuggestBags">0袋＋0ベル</span></span></div>
-        <div><b>ATM<ruby>入金総額<rt>にゅうきんそうがく</rt></ruby>：</b><span class="mono"><span id="atmSuggestTotal">0</span></span> ベル</div>
+        <div><b>ATM<ruby>入金総額<rt>にゅうきんそうがく</rt></ruby>（基準）：</b><span class="mono"><span id="atmSuggestTotal">0</span></span> ベル</div>
+        <div><b><ruby>入金目安<rt>にゅうきんめやす</rt></ruby>（基準）：</b><span class="mono"><span id="atmSuggestBags">0袋＋0ベル</span></span></div>
+
+        <div class="atm-subline" id="atmAdjustWrap">
+          <div id="atmChipRow"></div>
+
+          <div style="margin-top:6px;">
+            <div><b>ATM<ruby>入金総額<rt>にゅうきんそうがく</rt></ruby>（調整後）：</b><span class="mono"><span id="atmAdjustedTotal">0</span></span> ベル</div>
+            <div><b><ruby>入金目安<rt>にゅうきんめやす</rt></ruby>（調整後）：</b><span class="mono"><span id="atmAdjustedBags">0袋＋0ベル</span></span></div>
+          </div>
+        </div>
       </div>
 
       <div class="input-group" style="margin-top:12px;">
@@ -594,7 +485,7 @@
       </div>
 
       <div class="result-card">
-        <ruby>入金合計<rt>にゅうきんごうけい</rt></ruby>：<span id="atmTotal" style="color:#673ab7; font-size:1.25em;">0</span> ベル
+        <ruby>入金合計<rt>にゅうきんごうけい</rt></ruby>：<span id="atmTotal" style="color:#673ab7;font-size:1.25em;">0</span> ベル
       </div>
     </div>
 
@@ -659,313 +550,366 @@
       </div>
 
       <div style="height:12px;"></div>
-
-      <div class="memo-row">
-        <button class="btn danger" id="clearMemoAll" type="button"><ruby>メモ<rt>めも</rt></ruby>を<ruby>全消去<rt>ぜんしょうきょ</rt></ruby></button>
-      </div>
+      <div class="memo-row"><button class="btn danger" id="clearMemoAll" type="button"><ruby>メモ<rt>めも</rt></ruby>を<ruby>全消去<rt>ぜんしょうきょ</rt></ruby></button></div>
     </div>
   </div>
 
   <script>
-    const COOKIE_KEY = "kabutool_state_full_v9";
+    const COOKIE_KEY = "kabutool_state_full_v15";
 
     function setCookie(name, value, days){
-      const d = new Date();
-      d.setTime(d.getTime() + (days*24*60*60*1000));
-      document.cookie = name + "=" + encodeURIComponent(value) + "; expires=" + d.toUTCString() + "; path=/; SameSite=Lax";
+      const d=new Date(); d.setTime(d.getTime()+days*24*60*60*1000);
+      document.cookie = name+"="+encodeURIComponent(value)+"; expires="+d.toUTCString()+"; path=/; SameSite=Lax";
     }
     function getCookie(name){
-      const target = name + "=";
-      const parts = document.cookie.split("; ");
-      for(const p of parts){
-        if(p.indexOf(target) === 0) return decodeURIComponent(p.substring(target.length));
-      }
+      const target=name+"=";
+      const parts=document.cookie.split("; ");
+      for(const p of parts){ if(p.indexOf(target)===0) return decodeURIComponent(p.substring(target.length)); }
       return "";
     }
     function loadState(){
-      const raw = getCookie(COOKIE_KEY);
-      if(!raw) return null;
-      try { return JSON.parse(raw); } catch(e){ return null; }
+      const raw=getCookie(COOKIE_KEY); if(!raw) return null;
+      try{ return JSON.parse(raw);}catch(e){ return null;}
     }
     function saveState(partial){
-      const current = loadState() || {};
-      const next = { ...current, ...partial, _savedAt: Date.now() };
+      const current=loadState()||{};
+      const next={...current,...partial,_savedAt:Date.now()};
       setCookie(COOKIE_KEY, JSON.stringify(next), 365);
     }
 
-    function parseNumber(str){
-      return Number((str || "").replace(/,/g, "")) || 0;
-    }
-    function toComma(n){
-      return (Number(n) || 0).toLocaleString();
-    }
+    function parseNumber(str){ return Number((str||"").replace(/,/g,""))||0; }
+    function toComma(n){ return (Number(n)||0).toLocaleString(); }
     function toBagsText(bells){
-      const total = Math.max(0, Math.floor(Number(bells) || 0));
-      const bags = Math.floor(total / 99000);
-      const rem  = total % 99000;
+      const total=Math.max(0, Math.floor(Number(bells)||0));
+      const bags=Math.floor(total/99000);
+      const rem=total%99000;
       return `${toComma(bags)}袋＋${toComma(rem)}ベル`;
     }
 
-    let isComposing = false;
+    let isComposing=false;
 
     function digitsLeftOfCaret(value, caret){
-      const left = value.slice(0, caret);
-      return (left.match(/[0-9]/g) || []).length;
+      const left=value.slice(0, caret);
+      return (left.match(/[0-9]/g)||[]).length;
     }
     function caretFromDigitIndex(formattedValue, digitIndex){
-      if(digitIndex <= 0) return 0;
-      let count = 0;
-      for(let i=0; i<formattedValue.length; i++){
+      if(digitIndex<=0) return 0;
+      let count=0;
+      for(let i=0;i<formattedValue.length;i++){
         if(/[0-9]/.test(formattedValue[i])) count++;
-        if(count === digitIndex) return i+1;
+        if(count===digitIndex) return i+1;
       }
       return formattedValue.length;
     }
 
     function normalizeDigits(str){
-      let v = (str || "").replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
-      return v.replace(/[^0-9]/g, "");
+      let v=(str||"").replace(/[０-９]/g, s=>String.fromCharCode(s.charCodeAt(0)-0xFEE0));
+      return v.replace(/[^0-9]/g,"");
     }
     function formatDigitsWithCommas(digits){
-      const s = String(digits || "");
-      if(s === "") return "";
-      return s.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      const s=String(digits||"");
+      if(s==="") return "";
+      return s.replace(/\B(?=(\d{3})+(?!\d))/g,",");
     }
 
-    // 目標金額：どこで削っても桁が落ちる／途中入れ替えは右0維持
-    let targetFixedLen = 0;
-    let targetBefore = null;
+    // 目標：どこで削っても桁が落ちる／途中入れ替えは右0維持
+    let targetFixedLen=0;
+    let targetBefore=null;
 
     function captureTargetBeforeInput(e){
-      const el = e.target;
-      if(!el || el.id !== "targetBank") return;
-      targetBefore = {
-        inputType: e.inputType || "",
+      const el=e.target;
+      if(!el || el.id!=="targetBank") return;
+      targetBefore={
+        inputType: e.inputType||"",
         start: el.selectionStart ?? 0,
         end: el.selectionEnd ?? 0,
-        value: el.value || "",
-        digits: normalizeDigits(el.value || "")
+        value: el.value||"",
+        digits: normalizeDigits(el.value||"")
       };
     }
-
-    function isDeleteType(t){
-      return String(t || "").startsWith("delete");
-    }
-    function isInsertType(t){
-      return String(t || "").startsWith("insert");
-    }
+    function isDeleteType(t){ return String(t||"").startsWith("delete"); }
+    function isInsertType(t){ return String(t||"").startsWith("insert"); }
 
     function formatTargetKeepCaret(el){
-      const rawBefore = el.value;
-      const caretBefore = el.selectionStart ?? rawBefore.length;
+      const rawBefore=el.value;
+      const caretBefore=el.selectionStart ?? rawBefore.length;
 
-      let v = rawBefore.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
-      const digitIdx = digitsLeftOfCaret(v, caretBefore);
+      let v=rawBefore.replace(/[０-９]/g, s=>String.fromCharCode(s.charCodeAt(0)-0xFEE0));
+      const digitIdx=digitsLeftOfCaret(v, caretBefore);
+      const newDigitsRaw=normalizeDigits(v);
 
-      const newDigitsRaw = normalizeDigits(v);
+      if(!targetFixedLen){ targetFixedLen = newDigitsRaw ? newDigitsRaw.length : 9; }
 
-      if(!targetFixedLen){
-        targetFixedLen = newDigitsRaw ? newDigitsRaw.length : 9;
-      }
+      const prevDigits=(targetBefore && typeof targetBefore.digits==="string") ? targetBefore.digits : null;
+      const prevLen=prevDigits ? prevDigits.length : targetFixedLen;
+      const nowLen=newDigitsRaw.length;
 
-      const prevDigits = (targetBefore && typeof targetBefore.digits === "string") ? targetBefore.digits : null;
-      const prevLen = prevDigits ? prevDigits.length : targetFixedLen;
-      const nowLen  = newDigitsRaw.length;
+      const inputType=(targetBefore && targetBefore.inputType) ? targetBefore.inputType : "";
+      const deleting=isDeleteType(inputType) || (prevDigits!==null && nowLen<prevLen);
 
-      const inputType = (targetBefore && targetBefore.inputType) ? targetBefore.inputType : "";
-      const deleting = isDeleteType(inputType) || (prevDigits !== null && nowLen < prevLen);
+      let nextDigits=newDigitsRaw;
 
-      let nextDigits = newDigitsRaw;
-
-      if(nextDigits === ""){
-        el.value = "";
-        saveState({ targetBank: "" });
+      if(nextDigits===""){
+        el.value="";
+        saveState({ targetBank:"" });
         calc();
         return;
       }
 
       if(deleting){
-        targetFixedLen = Math.max(1, nowLen);
+        targetFixedLen=Math.max(1, nowLen);
       }else{
-        if(isInsertType(inputType) && nowLen > targetFixedLen) targetFixedLen = nowLen;
-        if(nowLen < targetFixedLen) nextDigits = nextDigits.padEnd(targetFixedLen, "0");
-        if(nextDigits.length > targetFixedLen) targetFixedLen = nextDigits.length;
+        if(isInsertType(inputType) && nowLen>targetFixedLen) targetFixedLen=nowLen;
+        if(nowLen<targetFixedLen) nextDigits = nextDigits.padEnd(targetFixedLen, "0");
+        if(nextDigits.length>targetFixedLen) targetFixedLen=nextDigits.length;
       }
 
-      const formatted = formatDigitsWithCommas(nextDigits);
-      el.value = formatted;
+      const formatted=formatDigitsWithCommas(nextDigits);
+      el.value=formatted;
 
-      const newCaret = caretFromDigitIndex(formatted, digitIdx);
-      try { el.setSelectionRange(newCaret, newCaret); } catch(e){}
-
+      const newCaret=caretFromDigitIndex(formatted, digitIdx);
+      try{ el.setSelectionRange(newCaret, newCaret);}catch(e){}
       saveState({ targetBank: el.value });
       calc();
     }
 
     function formatNormalKeepCaret(el){
-      const rawBefore = el.value;
-      const caretBefore = el.selectionStart ?? rawBefore.length;
+      const rawBefore=el.value;
+      const caretBefore=el.selectionStart ?? rawBefore.length;
 
-      let v = rawBefore.replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
-      const digitIdx = digitsLeftOfCaret(v, caretBefore);
+      let v=rawBefore.replace(/[０-９]/g, s=>String.fromCharCode(s.charCodeAt(0)-0xFEE0));
+      const digitIdx=digitsLeftOfCaret(v, caretBefore);
 
-      const rawDigits = v.replace(/[^0-9]/g, "");
-      const formatted = rawDigits !== "" ? Number(rawDigits).toLocaleString() : "";
+      const rawDigits=v.replace(/[^0-9]/g,"");
+      const formatted = rawDigits!=="" ? Number(rawDigits).toLocaleString() : "";
+      el.value=formatted;
 
-      el.value = formatted;
+      const newCaret=caretFromDigitIndex(formatted, digitIdx);
+      try{ el.setSelectionRange(newCaret, newCaret);}catch(e){}
 
-      const newCaret = caretFromDigitIndex(formatted, digitIdx);
-      try { el.setSelectionRange(newCaret, newCaret); } catch(e){}
-
-      if(["buyPrice","sellPrice","currentBank","rows","slots","bags"].includes(el.id)){
-        saveState({ [el.id]: el.value });
-      }
+      const saveIds=[
+        "buyPrice","sellPrice","currentBank","rows","slots","bags",
+        "buyRewardTickets","buyRewardFullBags","buyRewardBells",
+        "sellRewardTickets","sellRewardFullBags","sellRewardBells"
+      ];
+      if(saveIds.includes(el.id)) saveState({ [el.id]: el.value });
       calc();
     }
 
     document.querySelectorAll(".comma-input").forEach(el=>{
-      el.addEventListener("compositionstart", ()=>{ isComposing = true; });
+      el.addEventListener("compositionstart", ()=>{ isComposing=true; });
       el.addEventListener("compositionend", ()=>{
-        isComposing = false;
-        if(el.id === "targetBank") formatTargetKeepCaret(el);
+        isComposing=false;
+        if(el.id==="targetBank") formatTargetKeepCaret(el);
         else formatNormalKeepCaret(el);
       });
-      el.addEventListener("beforeinput", (e)=>{
-        if(el.id === "targetBank") captureTargetBeforeInput(e);
-      });
+      el.addEventListener("beforeinput", (e)=>{ if(el.id==="targetBank") captureTargetBeforeInput(e); });
       el.addEventListener("input", ()=>{
         if(isComposing) return;
-        if(el.id === "targetBank") formatTargetKeepCaret(el);
+        if(el.id==="targetBank") formatTargetKeepCaret(el);
         else formatNormalKeepCaret(el);
       });
     });
 
-    function setPlanEmptyState(isEmpty){
-      const plan = document.getElementById("planOutput");
-      if(isEmpty) plan.classList.add("plan-empty");
-      else plan.classList.remove("plan-empty");
+    // 対価：枠内で完結（項目ごとに中身を内包）
+    const buyRewardEnabledEl = document.getElementById("buyRewardEnabled");
+    const sellRewardEnabledEl = document.getElementById("sellRewardEnabled");
+    const buyRewardPanel = document.getElementById("buyRewardPanel");
+    const sellRewardPanel = document.getElementById("sellRewardPanel");
+
+    const buyRewardTicketsEl = document.getElementById("buyRewardTickets");
+    const buyRewardFullBagsEl = document.getElementById("buyRewardFullBags");
+    const buyRewardBellsEl = document.getElementById("buyRewardBells");
+    const buyRewardOtherEl = document.getElementById("buyRewardOther");
+
+    const sellRewardTicketsEl = document.getElementById("sellRewardTickets");
+    const sellRewardFullBagsEl = document.getElementById("sellRewardFullBags");
+    const sellRewardBellsEl = document.getElementById("sellRewardBells");
+    const sellRewardOtherEl = document.getElementById("sellRewardOther");
+
+    const buyChkTickets = document.getElementById("buyChkTickets");
+    const buyChkBells = document.getElementById("buyChkBells");
+    const buyChkOther = document.getElementById("buyChkOther");
+    const buyItemTickets = document.getElementById("buyItemTickets");
+    const buyItemBells = document.getElementById("buyItemBells");
+    const buyItemOther = document.getElementById("buyItemOther");
+    const buyFieldsTickets = document.getElementById("buyFieldsTickets");
+    const buyFieldsBells = document.getElementById("buyFieldsBells");
+    const buyFieldsOther = document.getElementById("buyFieldsOther");
+
+    const sellChkTickets = document.getElementById("sellChkTickets");
+    const sellChkBells = document.getElementById("sellChkBells");
+    const sellChkOther = document.getElementById("sellChkOther");
+    const sellItemTickets = document.getElementById("sellItemTickets");
+    const sellItemBells = document.getElementById("sellItemBells");
+    const sellItemOther = document.getElementById("sellItemOther");
+    const sellFieldsTickets = document.getElementById("sellFieldsTickets");
+    const sellFieldsBells = document.getElementById("sellFieldsBells");
+    const sellFieldsOther = document.getElementById("sellFieldsOther");
+
+    function openFields(fieldsEl, open){ fieldsEl.classList.toggle("open", !!open); }
+    function setItemFilled(itemEl, filled){ itemEl.classList.toggle("filled", !!filled); }
+
+    function applyRewardPanels(){
+      buyRewardPanel.classList.toggle("open", !!buyRewardEnabledEl.checked);
+      sellRewardPanel.classList.toggle("open", !!sellRewardEnabledEl.checked);
     }
 
-    const buyTripEl  = document.getElementById("buyTripCount");
-    const sellTripEl = document.getElementById("sellTripCount");
-
-    function clampInt(v){ return Math.max(0, Math.floor(Number(v) || 0)); }
-    function setCounter(el, key, v){
-      const n = clampInt(v);
-      el.textContent = toComma(n);
-      saveState({ [key]: n });
+    function clearBuyRewardAll(){
+      buyRewardTicketsEl.value=""; buyRewardFullBagsEl.value=""; buyRewardBellsEl.value=""; buyRewardOtherEl.value="";
+      saveState({buyRewardTickets:"",buyRewardFullBags:"",buyRewardBells:"",buyRewardOther:""});
+      buyChkTickets.checked=false; buyChkBells.checked=false; buyChkOther.checked=false;
+      refreshRewardItems();
     }
+    function clearSellRewardAll(){
+      sellRewardTicketsEl.value=""; sellRewardFullBagsEl.value=""; sellRewardBellsEl.value=""; sellRewardOtherEl.value="";
+      saveState({sellRewardTickets:"",sellRewardFullBags:"",sellRewardBells:"",sellRewardOther:""});
+      sellChkTickets.checked=false; sellChkBells.checked=false; sellChkOther.checked=false;
+      refreshRewardItems();
+    }
+
+    buyRewardEnabledEl.addEventListener("change", ()=>{
+      const on=!!buyRewardEnabledEl.checked;
+      saveState({ buyRewardEnabled:on });
+      applyRewardPanels();
+      if(!on) clearBuyRewardAll();
+      calc();
+    });
+    sellRewardEnabledEl.addEventListener("change", ()=>{
+      const on=!!sellRewardEnabledEl.checked;
+      saveState({ sellRewardEnabled:on });
+      applyRewardPanels();
+      if(!on) clearSellRewardAll();
+      calc();
+    });
+
+    buyRewardOtherEl.addEventListener("input", ()=>{ saveState({ buyRewardOther: buyRewardOtherEl.value }); refreshRewardItems(); });
+    sellRewardOtherEl.addEventListener("input", ()=>{ saveState({ sellRewardOther: sellRewardOtherEl.value }); refreshRewardItems(); });
+
+    function hasBuyTickets(){ return parseNumber(buyRewardTicketsEl.value)>0; }
+    function hasBuyBells(){ return parseNumber(buyRewardFullBagsEl.value)>0 || parseNumber(buyRewardBellsEl.value)>0; }
+    function hasBuyOther(){ return (buyRewardOtherEl.value||"").trim().length>0; }
+    function hasSellTickets(){ return parseNumber(sellRewardTicketsEl.value)>0; }
+    function hasSellBells(){ return parseNumber(sellRewardFullBagsEl.value)>0 || parseNumber(sellRewardBellsEl.value)>0; }
+    function hasSellOther(){ return (sellRewardOtherEl.value||"").trim().length>0; }
+
+    function refreshRewardItems(){
+      const bt=hasBuyTickets(), bb=hasBuyBells(), bo=hasBuyOther();
+      buyChkTickets.checked = bt || buyChkTickets.checked;
+      buyChkBells.checked   = bb || buyChkBells.checked;
+      buyChkOther.checked   = bo || buyChkOther.checked;
+
+      setItemFilled(buyItemTickets, bt);
+      setItemFilled(buyItemBells, bb);
+      setItemFilled(buyItemOther, bo);
+
+      openFields(buyFieldsTickets, !!buyChkTickets.checked);
+      openFields(buyFieldsBells,   !!buyChkBells.checked);
+      openFields(buyFieldsOther,   !!buyChkOther.checked);
+
+      const st=hasSellTickets(), sb=hasSellBells(), so=hasSellOther();
+      sellChkTickets.checked = st || sellChkTickets.checked;
+      sellChkBells.checked   = sb || sellChkBells.checked;
+      sellChkOther.checked   = so || sellChkOther.checked;
+
+      setItemFilled(sellItemTickets, st);
+      setItemFilled(sellItemBells, sb);
+      setItemFilled(sellItemOther, so);
+
+      openFields(sellFieldsTickets, !!sellChkTickets.checked);
+      openFields(sellFieldsBells,   !!sellChkBells.checked);
+      openFields(sellFieldsOther,   !!sellChkOther.checked);
+    }
+
+    function clearBuyTicketsOnly(){ buyRewardTicketsEl.value=""; saveState({buyRewardTickets:""}); }
+    function clearBuyBellsOnly(){ buyRewardFullBagsEl.value=""; buyRewardBellsEl.value=""; saveState({buyRewardFullBags:"",buyRewardBells:""}); }
+    function clearBuyOtherOnly(){ buyRewardOtherEl.value=""; saveState({buyRewardOther:""}); }
+    function clearSellTicketsOnly(){ sellRewardTicketsEl.value=""; saveState({sellRewardTickets:""}); }
+    function clearSellBellsOnly(){ sellRewardFullBagsEl.value=""; sellRewardBellsEl.value=""; saveState({sellRewardFullBags:"",sellRewardBells:""}); }
+    function clearSellOtherOnly(){ sellRewardOtherEl.value=""; saveState({sellRewardOther:""}); }
+
+    buyChkTickets.addEventListener("change", ()=>{ if(!buyChkTickets.checked) clearBuyTicketsOnly(); refreshRewardItems(); calc(); });
+    buyChkBells.addEventListener("change", ()=>{ if(!buyChkBells.checked) clearBuyBellsOnly(); refreshRewardItems(); calc(); });
+    buyChkOther.addEventListener("change", ()=>{ if(!buyChkOther.checked) clearBuyOtherOnly(); refreshRewardItems(); calc(); });
+
+    sellChkTickets.addEventListener("change", ()=>{ if(!sellChkTickets.checked) clearSellTicketsOnly(); refreshRewardItems(); calc(); });
+    sellChkBells.addEventListener("change", ()=>{ if(!sellChkBells.checked) clearSellBellsOnly(); refreshRewardItems(); calc(); });
+    sellChkOther.addEventListener("change", ()=>{ if(!sellChkOther.checked) clearSellOtherOnly(); refreshRewardItems(); calc(); });
+
+    ["input","change"].forEach(ev=>{
+      buyRewardTicketsEl.addEventListener(ev, ()=>{ refreshRewardItems(); calc(); });
+      buyRewardFullBagsEl.addEventListener(ev, ()=>{ refreshRewardItems(); calc(); });
+      buyRewardBellsEl.addEventListener(ev, ()=>{ refreshRewardItems(); calc(); });
+
+      sellRewardTicketsEl.addEventListener(ev, ()=>{ refreshRewardItems(); calc(); });
+      sellRewardFullBagsEl.addEventListener(ev, ()=>{ refreshRewardItems(); calc(); });
+      sellRewardBellsEl.addEventListener(ev, ()=>{ refreshRewardItems(); calc(); });
+    });
+
+    const buyTripEl=document.getElementById("buyTripCount");
+    const sellTripEl=document.getElementById("sellTripCount");
+    function clampInt(v){ return Math.max(0, Math.floor(Number(v)||0)); }
+    function setCounter(el,key,v){ const n=clampInt(v); el.textContent=toComma(n); saveState({[key]:n}); }
     function getCounter(el){ return parseNumber(el.textContent); }
 
-    document.getElementById("buyTripPlus").addEventListener("click", ()=> setCounter(buyTripEl, "buyTripCount", getCounter(buyTripEl)+1));
-    document.getElementById("buyTripMinus").addEventListener("click", ()=> setCounter(buyTripEl, "buyTripCount", getCounter(buyTripEl)-1));
-    document.getElementById("buyTripReset").addEventListener("click", ()=> setCounter(buyTripEl, "buyTripCount", 0));
-
-    document.getElementById("sellTripPlus").addEventListener("click", ()=> setCounter(sellTripEl, "sellTripCount", getCounter(sellTripEl)+1));
-    document.getElementById("sellTripMinus").addEventListener("click", ()=> setCounter(sellTripEl, "sellTripCount", getCounter(sellTripEl)-1));
-    document.getElementById("sellTripReset").addEventListener("click", ()=> setCounter(sellTripEl, "sellTripCount", 0));
+    document.getElementById("buyTripPlus").addEventListener("click", ()=> setCounter(buyTripEl,"buyTripCount",getCounter(buyTripEl)+1));
+    document.getElementById("buyTripMinus").addEventListener("click",()=> setCounter(buyTripEl,"buyTripCount",getCounter(buyTripEl)-1));
+    document.getElementById("buyTripReset").addEventListener("click",()=> setCounter(buyTripEl,"buyTripCount",0));
+    document.getElementById("sellTripPlus").addEventListener("click", ()=> setCounter(sellTripEl,"sellTripCount",getCounter(sellTripEl)+1));
+    document.getElementById("sellTripMinus").addEventListener("click",()=> setCounter(sellTripEl,"sellTripCount",getCounter(sellTripEl)-1));
+    document.getElementById("sellTripReset").addEventListener("click",()=> setCounter(sellTripEl,"sellTripCount",0));
 
     function clearField(id){
-      const el = document.getElementById(id);
-      el.value = "";
-      saveState({ [id]: "" });
-      calc();
-      el.focus();
+      const el=document.getElementById(id);
+      el.value=""; saveState({[id]:""}); calc(); el.focus();
     }
     document.getElementById("clearBuy").addEventListener("click", ()=> clearField("buyPrice"));
-    document.getElementById("clearSell").addEventListener("click", ()=> clearField("sellPrice"));
-    document.getElementById("clearCurrent").addEventListener("click", ()=> clearField("currentBank"));
+    document.getElementById("clearSell").addEventListener("click",()=> clearField("sellPrice"));
+    document.getElementById("clearCurrent").addEventListener("click",()=> clearField("currentBank"));
     document.getElementById("clearTarget").addEventListener("click", ()=>{
-      targetFixedLen = 0;
-      targetBefore = null;
+      targetFixedLen=0; targetBefore=null;
       clearField("targetBank");
     });
 
-    /* Shortcuts */
-    const TOOL_LIST = [
-      { key:"", label:"（未設定）", img:"" },
-      { key:"scop", label:"スコップ", img:"img/scop.png" },
-      { key:"turizao", label:"つりざお", img:"img/turizao.png" },
-      { key:"musiami", label:"あみ", img:"img/musiami.png" },
-      { key:"ono", label:"オノ", img:"img/ono.png" },
-      { key:"pachinko", label:"パチンコ", img:"img/pachinko.png" },
-      { key:"jouro", label:"ジョウロ", img:"img/jouro.png" },
-      { key:"takatobi", label:"たかとびぼう", img:"img/takatobi.png" },
-      { key:"hashigo", label:"はしご", img:"img/hashigo.png" },
-      { key:"sutekki", label:"ステッキ", img:"img/sutekki.png" },
-      { key:"timer", label:"タイマー", img:"img/timer.png" },
-      { key:"megahon", label:"メガホン", img:"img/megahon.png" }
-    ];
-    const DIRS = [
-      { id:"up",    label:"⬆️ 上" },
-      { id:"ur",    label:"↗️ 右上" },
-      { id:"right", label:"➡️ 右" },
-      { id:"dr",    label:"↘️ 右下" },
-      { id:"down",  label:"⬇️ 下" },
-      { id:"dl",    label:"↙️ 左下" },
-      { id:"left",  label:"⬅️ 左" },
-      { id:"ul",    label:"↖️ 左上" }
-    ];
-
-    const shortcutGrid = document.getElementById("shortcutGrid");
-    const shortcutMemoEl = document.getElementById("shortcutMemo");
-
-    function toolByKey(key){
-      return TOOL_LIST.find(t=>t.key===key) || TOOL_LIST[0];
-    }
-
-    const FALLBACK_IMG = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-
+    // Shortcuts
+    const TOOL_LIST=[{key:"",label:"（未設定）",img:""},{key:"scop",label:"スコップ",img:"img/scop.png"},{key:"turizao",label:"つりざお",img:"img/turizao.png"},{key:"musiami",label:"あみ",img:"img/musiami.png"},{key:"ono",label:"オノ",img:"img/ono.png"},{key:"pachinko",label:"パチンコ",img:"img/pachinko.png"},{key:"jouro",label:"ジョウロ",img:"img/jouro.png"},{key:"takatobi",label:"たかとびぼう",img:"img/takatobi.png"},{key:"hashigo",label:"はしご",img:"img/hashigo.png"},{key:"sutekki",label:"ステッキ",img:"img/sutekki.png"},{key:"timer",label:"タイマー",img:"img/timer.png"},{key:"megahon",label:"メガホン",img:"img/megahon.png"}];
+    const DIRS=[{id:"up",label:"⬆️ 上"},{id:"ur",label:"↗️ 右上"},{id:"right",label:"➡️ 右"},{id:"dr",label:"↘️ 右下"},{id:"down",label:"⬇️ 下"},{id:"dl",label:"↙️ 左下"},{id:"left",label:"⬅️ 左"},{id:"ul",label:"↖️ 左上"}];
+    const shortcutGrid=document.getElementById("shortcutGrid");
+    const shortcutMemoEl=document.getElementById("shortcutMemo");
+    function toolByKey(key){ return TOOL_LIST.find(t=>t.key===key)||TOOL_LIST[0]; }
+    const FALLBACK_IMG="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
     function renderShortcutUI(state){
-      shortcutGrid.innerHTML = "";
-      const st = loadState() || {};
-      const shortcuts = (state && state.shortcuts) ? state.shortcuts : (st.shortcuts || {});
-
+      shortcutGrid.innerHTML="";
+      const st=loadState()||{};
+      const shortcuts=(state && state.shortcuts)? state.shortcuts : (st.shortcuts||{});
       DIRS.forEach(d=>{
-        const curKey = shortcuts[d.id] ? String(shortcuts[d.id]) : "";
-        const curTool = toolByKey(curKey);
+        const curKey=shortcuts[d.id]?String(shortcuts[d.id]):"";
+        const curTool=toolByKey(curKey);
 
-        const item = document.createElement("div");
-        item.className = "shortcut-item";
+        const item=document.createElement("div"); item.className="shortcut-item";
+        const top=document.createElement("div"); top.className="shortcut-top";
+        const dir=document.createElement("div"); dir.className="dir"; dir.textContent=d.label;
+        top.appendChild(dir); item.appendChild(top);
 
-        const top = document.createElement("div");
-        top.className = "shortcut-top";
-
-        const dir = document.createElement("div");
-        dir.className = "dir";
-        dir.textContent = d.label;
-
-        top.appendChild(dir);
-        item.appendChild(top);
-
-        const view = document.createElement("div");
-        view.className = "tool-view";
-
-        const img = document.createElement("img");
-        img.className = "tool-img";
-        img.alt = curTool.label;
-        img.src = curTool.img || FALLBACK_IMG;
-        img.onerror = () => { img.src = FALLBACK_IMG; };
+        const view=document.createElement("div"); view.className="tool-view";
+        const img=document.createElement("img"); img.className="tool-img"; img.alt=curTool.label; img.src=curTool.img||FALLBACK_IMG; img.onerror=()=>{img.src=FALLBACK_IMG;};
         view.appendChild(img);
 
-        const select = document.createElement("select");
+        const select=document.createElement("select");
         TOOL_LIST.forEach(t=>{
-          const opt = document.createElement("option");
-          opt.value = t.key;
-          opt.textContent = t.label;
-          if(t.key === curKey) opt.selected = true;
+          const opt=document.createElement("option");
+          opt.value=t.key; opt.textContent=t.label;
+          if(t.key===curKey) opt.selected=true;
           select.appendChild(opt);
         });
-
         select.addEventListener("change", ()=>{
-          const nextKey = select.value;
-          const nextTool = toolByKey(nextKey);
-          img.src = nextTool.img || FALLBACK_IMG;
-          img.alt = nextTool.label;
+          const nextKey=select.value;
+          const nextTool=toolByKey(nextKey);
+          img.src=nextTool.img||FALLBACK_IMG; img.alt=nextTool.label;
 
-          const cur = loadState() || {};
-          const next = { ...(cur.shortcuts || {}) };
-          next[d.id] = nextKey;
+          const cur=loadState()||{};
+          const next={...(cur.shortcuts||{})};
+          next[d.id]=nextKey;
           saveState({ shortcuts: next });
         });
 
@@ -974,243 +918,275 @@
         shortcutGrid.appendChild(item);
       });
     }
-
     function setShortcutDefault(){
-      const defaults = {
-        up: "pachinko",
-        ur: "turizao",
-        right: "scop",
-        dr: "musiami",
-        down: "takatobi",
-        dl: "ono",
-        left: "hashigo",
-        ul: "jouro"
-      };
+      const defaults={up:"pachinko",ur:"turizao",right:"scop",dr:"musiami",down:"takatobi",dl:"ono",left:"hashigo",ul:"jouro"};
       saveState({ shortcuts: defaults });
       renderShortcutUI({ shortcuts: defaults });
     }
     function clearShortcutsOnly(){
-      saveState({ shortcuts: {} });
-      renderShortcutUI({ shortcuts: {} });
-      shortcutMemoEl.value = "";
-      saveState({ shortcutMemo: "" });
+      saveState({ shortcuts:{} });
+      renderShortcutUI({ shortcuts:{} });
+      shortcutMemoEl.value=""; saveState({ shortcutMemo:"" });
     }
     document.getElementById("shortcutDefault").addEventListener("click", setShortcutDefault);
     document.getElementById("shortcutClear").addEventListener("click", clearShortcutsOnly);
     shortcutMemoEl.addEventListener("input", ()=> saveState({ shortcutMemo: shortcutMemoEl.value }));
 
     document.getElementById("clearMemoAll").addEventListener("click", ()=>{
-      setCounter(buyTripEl, "buyTripCount", 0);
-      setCounter(sellTripEl,"sellTripCount", 0);
-      shortcutMemoEl.value = "";
-      saveState({ shortcutMemo: "" });
+      setCounter(buyTripEl,"buyTripCount",0);
+      setCounter(sellTripEl,"sellTripCount",0);
+      shortcutMemoEl.value=""; saveState({ shortcutMemo:"" });
     });
 
+    function setPlanEmptyState(isEmpty){
+      const plan=document.getElementById("planOutput");
+      if(isEmpty) plan.classList.add("plan-empty");
+      else plan.classList.remove("plan-empty");
+    }
+
     function calc(){
-      const buyVal    = document.getElementById("buyPrice").value;
-      const sellVal   = document.getElementById("sellPrice").value;
-      const rowsInput = document.getElementById("rows");
-      const slotsInput= document.getElementById("slots");
-      const bankVal   = document.getElementById("currentBank").value;
-      const targetVal = document.getElementById("targetBank").value;
-      const bagsVal   = document.getElementById("bags").value;
+      const buyVal=document.getElementById("buyPrice").value;
+      const sellVal=document.getElementById("sellPrice").value;
+      const rowsInput=document.getElementById("rows");
+      const slotsInput=document.getElementById("slots");
+      const bankVal=document.getElementById("currentBank").value;
+      const targetVal=document.getElementById("targetBank").value;
+      const bagsVal=document.getElementById("bags").value;
 
-      const maxAlert  = document.getElementById("maxAlert");
+      const maxAlert=document.getElementById("maxAlert");
 
-      let rows  = parseNumber(rowsInput.value);
-      let slots = parseNumber(slotsInput.value);
+      let rows=parseNumber(rowsInput.value);
+      let slots=parseNumber(slotsInput.value);
 
-      if(rows >= 4){
-        rows = 4;
-        rowsInput.value = "4";
-        slots = 0;
-        slotsInput.value = "";
-        slotsInput.disabled = true;
-        maxAlert.style.display = "block";
+      if(rows>=4){
+        rows=4;
+        rowsInput.value="4";
+        slots=0;
+        slotsInput.value="";
+        slotsInput.disabled=true;
+        maxAlert.style.display="block";
       }else{
-        slotsInput.disabled = false;
-        maxAlert.style.display = "none";
-        if(slots > 9){
-          slots = 9;
-          slotsInput.value = "9";
+        slotsInput.disabled=false;
+        maxAlert.style.display="none";
+        if(slots>9){ slots=9; slotsInput.value="9"; }
+      }
+
+      const bPrice=parseNumber(buyVal);
+      const sPrice=parseNumber(sellVal);
+      const currentBank=parseNumber(bankVal);
+      const targetBank= targetVal==="" ? 0 : parseNumber(targetVal);
+      const bags=parseNumber(bagsVal);
+
+      const totalCapacitySlots=(rows*10)+slots;
+      const capacityStocks=totalCapacitySlots*100;
+
+      const costCurrent=capacityStocks*bPrice;
+      const salesCurrent=capacityStocks*sPrice;
+      const profitCurrent=(sPrice-bPrice)*capacityStocks;
+
+      document.getElementById("currentCapacityText").innerText=toComma(totalCapacitySlots);
+      document.getElementById("totalStocks").innerText=toComma(capacityStocks);
+      document.getElementById("targetStocks").innerText=toComma(capacityStocks);
+
+      document.getElementById("cost").innerText=toComma(costCurrent);
+      document.getElementById("sales").innerText=toComma(salesCurrent);
+      document.getElementById("profit").innerText=toComma(profitCurrent);
+
+      document.getElementById("costBags").innerText=toBagsText(costCurrent);
+      document.getElementById("salesBags").innerText=toBagsText(salesCurrent);
+
+      const needed=Math.max(0, targetBank-currentBank);
+      document.getElementById("neededAmount").innerText=toComma(needed);
+
+      document.getElementById("atmTotal").innerText=toComma(bags*99000);
+
+      const canFillBag=(bPrice>0)&&(totalCapacitySlots>0)&&(currentBank>=costCurrent);
+      const depositSuggest= canFillBag ? Math.max(0, salesCurrent-costCurrent) : 0;
+
+      document.getElementById("atmSuggestBags").innerText=toBagsText(depositSuggest);
+      document.getElementById("atmSuggestTotal").innerText=toComma(depositSuggest);
+      document.getElementById("atmCapacityText").innerText=toComma(totalCapacitySlots);
+
+      document.getElementById("memoPayBags").innerText=toBagsText(costCurrent);
+      document.getElementById("memoPayTotal").innerText=toComma(costCurrent);
+
+      const perTripProfit=profitCurrent;
+      const tripsToGoal=(perTripProfit>0)? Math.ceil(needed/perTripProfit) : 0;
+      document.getElementById("memoTripsToGoal").innerText=toComma(tripsToGoal);
+
+      const fullProfitPerTrip=(sPrice-bPrice)*4000;
+      const tripsToGoalFull=(fullProfitPerTrip>0)? Math.ceil(needed/fullProfitPerTrip) : 0;
+      document.getElementById("tripsFull").innerText=toComma(tripsToGoalFull);
+      document.getElementById("tripsCurrent").innerText=toComma(tripsToGoal);
+
+      refreshRewardItems();
+
+      // 買値：ベル対価がある時だけ表示（マイチケ/他アイテムでは出さない）
+      const buyRewardResult=document.getElementById("buyRewardResult");
+      const buyRewardEnabled = !!buyRewardEnabledEl.checked;
+      const buyBags = (buyRewardEnabled && buyChkBells.checked) ? parseNumber(buyRewardFullBagsEl.value) : 0;
+      const buyBells = (buyRewardEnabled && buyChkBells.checked) ? parseNumber(buyRewardBellsEl.value) : 0;
+      const buyRewardPayBells=Math.max(0, (buyBags*99000)+buyBells);
+      const showBuyRewardResult = buyRewardEnabled && buyRewardPayBells>0;
+
+      if(showBuyRewardResult){
+        buyRewardResult.classList.add("open");
+        const costWithReward=Math.max(0, costCurrent + buyRewardPayBells);
+        document.getElementById("costWithReward").innerText=toComma(costWithReward);
+        document.getElementById("costWithRewardBags").innerText=toBagsText(costWithReward);
+      }else{
+        buyRewardResult.classList.remove("open");
+      }
+
+      // ATM（売る時）：チェックONの「ベル」だけ差し引き
+      const sellRewardEnabled = !!sellRewardEnabledEl.checked;
+      const sellTickets = (sellRewardEnabled && sellChkTickets.checked) ? parseNumber(sellRewardTicketsEl.value) : 0;
+      const sellBags = (sellRewardEnabled && sellChkBells.checked) ? parseNumber(sellRewardFullBagsEl.value) : 0;
+      const sellBells = (sellRewardEnabled && sellChkBells.checked) ? parseNumber(sellRewardBellsEl.value) : 0;
+      const sellOther = (sellRewardEnabled && sellChkOther.checked) ? (sellRewardOtherEl.value||"").trim() : "";
+
+      const rewardSubtract=Math.max(0, (sellBags*99000)+sellBells);
+      const depositAdjusted=Math.max(0, depositSuggest - rewardSubtract);
+
+      const atmAdjustWrap=document.getElementById("atmAdjustWrap");
+      const chipRow=document.getElementById("atmChipRow");
+      chipRow.innerHTML="";
+
+      const hasAnyReward = sellRewardEnabled && (sellTickets>0 || rewardSubtract>0 || sellOther.length>0);
+
+      if(hasAnyReward){
+        if(sellTickets>0){
+          const chip=document.createElement("div");
+          chip.className="atm-chip";
+          chip.innerHTML=`<b>🎫 マイチケ</b>：<span class="mono">${toComma(sellTickets)}</span>枚`;
+          chipRow.appendChild(chip);
         }
+        if(rewardSubtract>0){
+          const chip=document.createElement("div");
+          chip.className="atm-chip";
+          chip.innerHTML=`<b>対価の差し引き</b>：<span class="mono">${toBagsText(rewardSubtract)}</span>`;
+          chipRow.appendChild(chip);
+        }
+        if(sellOther.length>0){
+          const chip=document.createElement("div");
+          chip.className="atm-chip";
+          chip.innerHTML=`<b>他アイテム</b>：<span class="mono">${sellOther.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}</span>`;
+          chipRow.appendChild(chip);
+        }
+
+        document.getElementById("atmAdjustedTotal").innerText=toComma(rewardSubtract>0 ? depositAdjusted : depositSuggest);
+        document.getElementById("atmAdjustedBags").innerText=toBagsText(rewardSubtract>0 ? depositAdjusted : depositSuggest);
+        atmAdjustWrap.style.display="block";
+      }else{
+        atmAdjustWrap.style.display="none";
       }
 
-      const bPrice = parseNumber(buyVal);
-      const sPrice = parseNumber(sellVal);
-      const currentBank = parseNumber(bankVal);
-      const targetBank  = targetVal === "" ? 0 : parseNumber(targetVal);
-      const bags = parseNumber(bagsVal);
+      // わらしべ
+      const tripDisplay=document.getElementById("tripDisplay");
+      const tripAlert=document.getElementById("tripAlert");
+      const planOut=document.getElementById("planOutput");
 
-      const totalCapacitySlots = (rows * 10) + slots;
-      const capacityStocks = totalCapacitySlots * 100;
-
-      const costCurrent = capacityStocks * bPrice;
-      const salesCurrent = capacityStocks * sPrice;
-      const profitCurrent = (sPrice - bPrice) * capacityStocks;
-
-      document.getElementById("currentCapacityText").innerText = toComma(totalCapacitySlots);
-      document.getElementById("totalStocks").innerText = toComma(capacityStocks);
-      document.getElementById("targetStocks").innerText = toComma(capacityStocks);
-
-      document.getElementById("cost").innerText = toComma(costCurrent);
-      document.getElementById("sales").innerText = toComma(salesCurrent);
-      document.getElementById("profit").innerText = toComma(profitCurrent);
-
-      document.getElementById("costBags").innerText  = toBagsText(costCurrent);
-      document.getElementById("salesBags").innerText = toBagsText(salesCurrent);
-
-      const needed = Math.max(0, targetBank - currentBank);
-      document.getElementById("neededAmount").innerText = toComma(needed);
-
-      document.getElementById("atmTotal").innerText = toComma(bags * 99000);
-
-      const canFillBag = (bPrice > 0) && (totalCapacitySlots > 0) && (currentBank >= costCurrent);
-      const depositSuggest = canFillBag ? Math.max(0, salesCurrent - costCurrent) : 0;
-
-      document.getElementById("atmSuggestBags").innerText = toBagsText(depositSuggest);
-      document.getElementById("atmSuggestTotal").innerText = toComma(depositSuggest);
-
-      document.getElementById("atmCapacityText").innerText = toComma(totalCapacitySlots);
-
-      document.getElementById("memoPayBags").innerText = toBagsText(costCurrent);
-      document.getElementById("memoPayTotal").innerText = toComma(costCurrent);
-
-      const perTripProfit = profitCurrent;
-      const tripsToGoal = (perTripProfit > 0) ? Math.ceil(needed / perTripProfit) : 0;
-      document.getElementById("memoTripsToGoal").innerText = toComma(tripsToGoal);
-
-      const fullProfitPerTrip = (sPrice - bPrice) * 4000;
-      const tripsToGoalFull = (fullProfitPerTrip > 0) ? Math.ceil(needed / fullProfitPerTrip) : 0;
-      document.getElementById("tripsFull").innerText = toComma(tripsToGoalFull);
-      document.getElementById("tripsCurrent").innerText = toComma(tripsToGoal);
-
-      const tripDisplay = document.getElementById("tripDisplay");
-      const tripAlert   = document.getElementById("tripAlert");
-      const planOut = document.getElementById("planOutput");
-
-      if(buyVal === "" || sellVal === "" || bankVal === ""){
-        tripDisplay.style.display = "grid";
-        tripAlert.style.display = "none";
+      if(buyVal==="" || sellVal==="" || bankVal===""){
+        tripDisplay.style.display="grid";
+        tripAlert.style.display="none";
         setPlanEmptyState(true);
-        planOut.innerHTML = `
-          <div class="empty-msg">
-            <ruby>買値<rt>かいね</rt></ruby>・
-            <ruby>売値<rt>うりね</rt></ruby>・
-            <ruby>貯金<rt>ちょきん</rt></ruby>を<ruby>入<rt>い</rt></ruby>れてね
-          </div>
-        `;
+        planOut.innerHTML=`<div class="empty-msg"><ruby>買値<rt>かいね</rt></ruby>・<ruby>売値<rt>うりね</rt></ruby>・<ruby>貯金<rt>ちょきん</rt></ruby>を<ruby>入<rt>い</rt></ruby>れてね</div>`;
         return;
       }
-
-      if(!(sPrice > bPrice)){
+      if(!(sPrice>bPrice)){
         setPlanEmptyState(false);
-        planOut.textContent = "売値は買値より高く設定してください。";
-        tripDisplay.style.display = "grid";
-        tripAlert.style.display = "none";
+        planOut.textContent="売値は買値より高く設定してください。";
+        tripDisplay.style.display="grid";
+        tripAlert.style.display="none";
         return;
       }
 
-      const needToFillBag = costCurrent;
-      let tempBank = currentBank;
-      let stepCount = 0;
-      let log = "";
+      const needToFillBag=costCurrent;
+      let tempBank=currentBank;
+      let stepCount=0;
+      let log="";
+      const notEnoughNow=tempBank<needToFillBag;
 
-      const notEnoughNow = tempBank < needToFillBag;
-
-      while(tempBank < needToFillBag && stepCount < 200){
+      while(tempBank<needToFillBag && stepCount<200){
         stepCount++;
-        const buyAmount = Math.floor(tempBank / bPrice);
-        const profit = buyAmount * (sPrice - bPrice);
-
-        if(stepCount <= 8){
+        const buyAmount=Math.floor(tempBank/bPrice);
+        const profit=buyAmount*(sPrice-bPrice);
+        if(stepCount<=8){
           log += `<li>${stepCount}<ruby>回目<rt>かいめ</rt></ruby>：${toComma(buyAmount)}カブ<ruby>購入<rt>こうにゅう</rt></ruby></li>`;
         }
         tempBank += profit;
-        if(profit <= 0) break;
+        if(profit<=0) break;
       }
 
-      if(notEnoughNow){
-        tripDisplay.style.display = "none";
-        tripAlert.style.display = "block";
-      }else{
-        tripDisplay.style.display = "grid";
-        tripAlert.style.display = "none";
-      }
+      if(notEnoughNow){ tripDisplay.style.display="none"; tripAlert.style.display="block"; }
+      else{ tripDisplay.style.display="grid"; tripAlert.style.display="none"; }
 
       setPlanEmptyState(false);
 
-      let message = `<div><b>カバン(${totalCapacitySlots}マス)</b>を<ruby>満タン<rt>まんたん</rt></ruby>にする<ruby>計画<rt>けいかく</rt></ruby>：</div>`;
-
+      let message=`<div><b>カバン(${totalCapacitySlots}マス)</b>を<ruby>満タン<rt>まんたん</rt></ruby>にする<ruby>計画<rt>けいかく</rt></ruby>：</div>`;
       if(!notEnoughNow){
-        message += `<div style="margin:8px 0; font-weight:900; color:#00796b;">
-          1<ruby>回目<rt>かいめ</rt></ruby>からカバンを<ruby>満タン<rt>まんたん</rt></ruby>にできます！
-        </div>`;
+        message += `<div style="margin:8px 0;font-weight:900;color:#00796b;">1<ruby>回目<rt>かいめ</rt></ruby>からカバンを<ruby>満タン<rt>まんたん</rt></ruby>にできます！</div>`;
       }else{
         message += `<ul>${log}</ul>`;
-
-        if(stepCount > 8){
-          const rest = stepCount - 8;
-          message += `
-            <div style="margin-top:6px; font-weight:900; color:#00695c;">
-              ...あと ${rest} <ruby>回<rt>かい</rt></ruby>の<ruby>往復<rt>おうふく</rt></ruby>...
-            </div>
-            <div style="font-weight:900; color:#00695c;">
-              （8<ruby>回目<rt>かいめ</rt></ruby>と<ruby>同<rt>おな</rt></ruby>じように<ruby>往復<rt>おうふく</rt></ruby>して<ruby>資金<rt>しきん</rt></ruby>を<ruby>貯<rt>た</rt></ruby>めます）
-            </div>
-          `;
+        if(stepCount>8){
+          const rest=stepCount-8;
+          message += `<div style="margin-top:6px;font-weight:900;color:#00695c;">...あと ${rest} <ruby>回<rt>かい</rt></ruby>の<ruby>往復<rt>おうふく</rt></ruby>...</div>
+                     <div style="font-weight:900;color:#00695c;">（8<ruby>回目<rt>かいめ</rt></ruby>と<ruby>同<rt>おな</rt></ruby>じように<ruby>往復<rt>おうふく</rt></ruby>して<ruby>資金<rt>しきん</rt></ruby>を<ruby>貯<rt>た</rt></ruby>めます）</div>`;
         }
-
-        message += `<div style="margin-top:10px; font-weight:900;">
-          あと <span class="red-val">${toComma(stepCount)}</span> <ruby>往復<rt>おうふく</rt></ruby>でカバンがいっぱいになります。
-        </div>`;
+        message += `<div style="margin-top:10px;font-weight:900;">あと <span class="red-val">${toComma(stepCount)}</span> <ruby>往復<rt>おうふく</rt></ruby>でカバンがいっぱいになります。</div>`;
       }
 
-      message += `<hr class="plan-hr">`;
-      message += `<div style="font-weight:900;">
-        <ruby>目標達成<rt>もくひょうたっせい</rt></ruby>まであと <span class="red-val">${toComma(tripsToGoal)}</span> <ruby>往復<rt>おうふく</rt></ruby>です。
-      </div>`;
-
-      planOut.innerHTML = message;
+      message += `<hr class="plan-hr"><div style="font-weight:900;"><ruby>目標達成<rt>もくひょうたっせい</rt></ruby>まであと <span class="red-val">${toComma(tripsToGoal)}</span> <ruby>往復<rt>おうふく</rt></ruby>です。</div>`;
+      planOut.innerHTML=message;
     }
 
-    const rubyBtn = document.getElementById("rubyToggle");
+    const rubyBtn=document.getElementById("rubyToggle");
     rubyBtn.addEventListener("click", ()=>{
       document.body.classList.toggle("no-ruby");
       rubyBtn.textContent = document.body.classList.contains("no-ruby") ? "ふりがな：OFF" : "ふりがな：ON";
     });
 
     (function init(){
-      const st = loadState();
-
+      const st=loadState();
       if(st){
-        const ids = ["buyPrice","sellPrice","currentBank","targetBank","rows","slots","bags"];
+        const ids=[
+          "buyPrice","sellPrice","currentBank","targetBank","rows","slots","bags",
+          "buyRewardTickets","buyRewardFullBags","buyRewardBells",
+          "sellRewardTickets","sellRewardFullBags","sellRewardBells"
+        ];
         ids.forEach(id=>{
-          if(typeof st[id] === "string"){
-            const el = document.getElementById(id);
-            if(el) el.value = st[id];
+          if(typeof st[id]==="string"){
+            const el=document.getElementById(id);
+            if(el) el.value=st[id];
           }
         });
 
-        if(typeof st.buyTripCount === "number")  buyTripEl.textContent  = toComma(st.buyTripCount);
-        if(typeof st.sellTripCount === "number") sellTripEl.textContent = toComma(st.sellTripCount);
+        if(typeof st.buyTripCount==="number") document.getElementById("buyTripCount").textContent=toComma(st.buyTripCount);
+        if(typeof st.sellTripCount==="number") document.getElementById("sellTripCount").textContent=toComma(st.sellTripCount);
 
-        if(typeof st.shortcutMemo === "string") shortcutMemoEl.value = st.shortcutMemo;
+        if(typeof st.shortcutMemo==="string") shortcutMemoEl.value=st.shortcutMemo;
+
+        if(typeof st.buyRewardOther==="string") buyRewardOtherEl.value=st.buyRewardOther;
+        if(typeof st.sellRewardOther==="string") sellRewardOtherEl.value=st.sellRewardOther;
+
+        buyRewardEnabledEl.checked=!!st.buyRewardEnabled;
+        sellRewardEnabledEl.checked=!!st.sellRewardEnabled;
 
         renderShortcutUI({ shortcuts: st.shortcuts || {} });
       }else{
         renderShortcutUI({ shortcuts: {} });
       }
 
-      const tb = document.getElementById("targetBank");
+      const tb=document.getElementById("targetBank");
       if(tb){
-        const d = normalizeDigits(tb.value);
-        if(d) targetFixedLen = d.length;
+        const d=normalizeDigits(tb.value);
+        if(d) targetFixedLen=d.length;
       }
 
+      applyRewardPanels();
+      refreshRewardItems();
       calc();
     })();
   </script>
 </body>
 </html>
-
