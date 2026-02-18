@@ -11,75 +11,295 @@
       --accent:#789440;
       --shadow:0 10px 30px rgba(0,0,0,.08);
     }
-    body{font-family:'Helvetica Neue',Arial,sans-serif;background:var(--bg);color:var(--text);display:flex;justify-content:center;padding:20px;margin:0;}
-    body.no-ruby rt{display:none;}
-    .container{background:#fff;padding:25px;border-radius:20px;box-shadow:var(--shadow);width:100%;max-width:480px;box-sizing:border-box;}
-    h2{text-align:center;color:var(--accent);margin:6px 0 18px;line-height:1.25;font-size:1.22em;letter-spacing:.01em;}
-    #rubyToggle{display:block;margin:0 auto 15px;padding:6px 14px;border-radius:999px;border:1px solid var(--accent);background:#fff;cursor:pointer;font-size:.85em;line-height:1.2;}
-    .box{margin-bottom:15px;padding:20px;border-radius:15px;border-left:12px solid;box-sizing:border-box;}
+
+    *{ box-sizing:border-box; }
+    html{ -webkit-text-size-adjust:100%; }
+    body{
+      font-family:'Helvetica Neue',Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      display:flex;
+      justify-content:center;
+      padding:16px;   /* 余白を少し詰める */
+      margin:0;
+      overflow-x:hidden;
+    }
+
+    body.no-ruby rt{ display:none; }
+
+    .container{
+      background:#fff;
+      padding:22px;
+      border-radius:20px;
+      box-shadow:var(--shadow);
+      width:100%;
+      max-width:480px;
+    }
+
+    h2{
+      text-align:center;
+      color:var(--accent);
+      margin:6px 0 18px;
+      line-height:1.25;
+      font-size:1.22em;
+      letter-spacing:.01em;
+    }
+
+    #rubyToggle{
+      display:block;
+      margin:0 auto 15px;
+      padding:6px 14px;
+      border-radius:999px;
+      border:1px solid var(--accent);
+      background:#fff;
+      cursor:pointer;
+      font-size:.85em;
+      line-height:1.2;
+      touch-action:manipulation;
+    }
+
+    .box{
+      margin-bottom:15px;
+      padding:20px;
+      border-radius:15px;
+      border-left:12px solid;
+    }
+
     .buy{border-color:#ffd54f;background:#fffde7;}
     .sell{border-color:#81c784;background:#f1f8e9;}
     .goal{border-color:#ff8a65;background:#fff3e0;}
     .plan{border-color:#4db6ac;background:#e0f2f1;}
     .atm{border-color:#d1c4e9;background:#f3e5f5;}
     .memo{border-color:#90a4ae;background:#eceff1;}
-    .input-group{margin-bottom:14px;}
-    .header-row{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
-    .header-left{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;font-size:1.05em;font-weight:800;line-height:1.25;}
-    .header-sub{font-size:.72em;font-weight:400;opacity:.85;}
-    ruby{font-style:normal;line-height:1.15;ruby-position:over;ruby-align:center;}
-    rt{font-size:.55em;font-weight:400;line-height:1;}
-    .sub-text{font-size:.85em;color:#795548;margin:0 0 6px;line-height:1.25;}
-    input[type="text"]{width:100%;padding:12px;border:2px solid #eee;border-radius:12px;font-size:18px;outline:none;background:#fff;color:var(--text);text-align:right;box-sizing:border-box;line-height:1.2;}
-    input[type="text"]:focus{border-color:var(--accent);}
-    input[type="text"]:disabled{background:#eceff1;color:transparent;border-color:#cfd8dc;cursor:not-allowed;}
-    input[type="text"]:disabled::placeholder{color:transparent;}
-    ::placeholder{color:#ccc;opacity:1;}
-    textarea{width:100%;border:2px solid #e0e0e0;border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.5;resize:vertical;background:#fff;color:var(--text);outline:none;box-sizing:border-box;}
-    textarea:focus{border-color:#90a4ae;}
-    .result-card{background:#fff;padding:14px;border-radius:12px;margin-top:10px;font-weight:700;line-height:1.55;box-sizing:border-box;border:1px solid rgba(0,0,0,.05);}
-    .red-val{color:#d32f2f;font-size:1.25em;}
-    .blue-val{color:#03a9f4;}
-    .separator{font-size:1.2em;font-weight:800;margin:0 10px;color:#795548;}
-    .cap-row{display:flex;align-items:center;gap:8px;flex-wrap:nowrap;}
-    .cap-row .cap-input{width:84px;min-width:72px;max-width:96px;}
-    .cap-unit{font-size:.85em;white-space:nowrap;}
-    #maxAlert{color:#d32f2f;font-size:.75em;margin-top:6px;display:none;font-weight:800;line-height:1.2;}
-    .btn{border:1px solid #90a4ae;background:#fff;border-radius:10px;padding:8px 10px;cursor:pointer;font-size:.9em;white-space:nowrap;line-height:1.1;touch-action:manipulation;}
-    .btn.small{padding:7px 12px;border-radius:999px;}
-    .btn.primary{border-color:#607d8b;}
-    .btn.danger{border-color:#c62828;color:#c62828;}
-    .trip-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
-    .highlight-box{background:#fff9c4;padding:10px;border-radius:8px;text-align:center;border:2px dashed #ffb300;display:flex;flex-direction:column;justify-content:center;min-height:80px;box-sizing:border-box;line-height:1.25;}
-    .highlight-box.small{background:#f0f4c3;border-color:#afb42b;}
-    .trip-num{font-size:1.35em;color:#e64a19;display:block;}
-    .capacity-label{font-size:.75em;color:#558b2f;margin-top:2px;}
-    #tripAlert{background:#ffecb3;border-color:#ffa000;text-align:center;padding:14px;border-radius:12px;border:2px dashed #ffa000;margin-top:10px;line-height:1.45;display:none;box-sizing:border-box;}
-    .plan .result-card{padding:12px;}
-    .plan-style{background:#b2dfdb;border:2px dashed #00897b;border-radius:12px;padding:12px 14px;width:100%;box-sizing:border-box;text-align:left;line-height:1.35;overflow:hidden;word-break:normal;overflow-wrap:anywhere;}
-    #planOutput ul{margin:8px 0 0;padding-left:1.15em;}
-    #planOutput li{margin:2px 0;line-height:1.35;}
-    #planOutput .plan-hr{border:0;border-top:1px solid rgba(0,137,123,.35);margin:10px 0;}
-    #planOutput.plan-empty{display:flex;align-items:center;min-height:70px;}
-    #planOutput .empty-msg{white-space:normal;line-height:1.5;}
+
+    .input-group{ margin-bottom:14px; }
+
+    .header-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .header-left{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:baseline;
+      gap:8px;
+      font-size:1.05em;
+      font-weight:800;
+      line-height:1.25;
+    }
+    .header-sub{ font-size:.72em; font-weight:400; opacity:.85; }
+
+    /* ===== ruby（iPhoneでのズレ・被り対策）===== */
+    ruby{
+      font-style:normal;
+      ruby-position:over;
+      ruby-align:center;
+      white-space:nowrap;
+      line-height:1.55;   /* ふりがな分の高さを確保して被りを抑える */
+    }
+    rt{
+      font-size:.58em;
+      font-weight:500;
+      line-height:1;
+      letter-spacing:0;
+      white-space:nowrap;
+    }
+
+    /* ボタン内のrubyが枠に被る対策 */
+    .btn ruby{ line-height:1.4; }
+    .btn rt{ font-size:.55em; }
+
+    .sub-text{
+      font-size:.85em;
+      color:#795548;
+      margin:0 0 6px;
+      line-height:1.25;
+    }
+
+    input[type="text"]{
+      width:100%;
+      padding:12px 14px;
+      border:2px solid #eee;
+      border-radius:12px;
+      font-size:18px;          /* iOSズーム回避 */
+      outline:none;
+      background:#fff;
+      color:var(--text);
+      text-align:right;
+      line-height:1.2;
+      font-variant-numeric: tabular-nums;
+      letter-spacing:0;
+      overflow:hidden;         /* iPhoneで“はみ出し”が起きる時の保険 */
+      text-overflow:clip;
+      caret-color: var(--text);
+    }
+    input[type="text"]:focus{ border-color:var(--accent); }
+    input[type="text"]:disabled{
+      background:#eceff1;
+      color:transparent;
+      border-color:#cfd8dc;
+      cursor:not-allowed;
+    }
+    input[type="text"]:disabled::placeholder{ color:transparent; }
+    ::placeholder{ color:#ccc; opacity:1; }
+
+    textarea{
+      width:100%;
+      border:2px solid #e0e0e0;
+      border-radius:12px;
+      padding:10px 12px;
+      font-size:14px;
+      line-height:1.5;
+      resize:vertical;
+      background:#fff;
+      color:var(--text);
+      outline:none;
+    }
+    textarea:focus{ border-color:#90a4ae; }
+
+    .result-card{
+      background:#fff;
+      padding:14px;
+      border-radius:12px;
+      margin-top:10px;
+      font-weight:700;
+      line-height:1.55;
+      border:1px solid rgba(0,0,0,.05);
+    }
+
+    .red-val{ color:#d32f2f; font-size:1.25em; }
+    .blue-val{ color:#03a9f4; }
+
+    .separator{ font-size:1.2em; font-weight:800; margin:0 10px; color:#795548; }
+
+    .cap-row{ display:flex; align-items:center; gap:8px; flex-wrap:nowrap; }
+    .cap-row .cap-input{ width:84px; min-width:72px; max-width:96px; }
+    .cap-unit{ font-size:.85em; white-space:nowrap; }
+
+    #maxAlert{ color:#d32f2f; font-size:.75em; margin-top:6px; display:none; font-weight:800; line-height:1.2; }
+
+    .btn{
+      border:1px solid #90a4ae;
+      background:#fff;
+      border-radius:10px;
+      padding:8px 10px;
+      cursor:pointer;
+      font-size:.9em;
+      white-space:nowrap;
+      line-height:1.1;
+      touch-action:manipulation;
+    }
+    .btn.small{ padding:7px 12px; border-radius:999px; }
+    .btn.primary{ border-color:#607d8b; }
+    .btn.danger{ border-color:#c62828; color:#c62828; }
+
+    .trip-compare{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+    .highlight-box{
+      background:#fff9c4;
+      padding:10px;
+      border-radius:8px;
+      text-align:center;
+      border:2px dashed #ffb300;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      min-height:80px;
+      line-height:1.25;
+    }
+    .highlight-box.small{ background:#f0f4c3; border-color:#afb42b; }
+    .trip-num{ font-size:1.35em; color:#e64a19; display:block; }
+    .capacity-label{ font-size:.75em; color:#558b2f; margin-top:2px; }
+
+    #tripAlert{
+      background:#ffecb3;
+      border-color:#ffa000;
+      text-align:center;
+      padding:14px;
+      border-radius:12px;
+      border:2px dashed #ffa000;
+      margin-top:10px;
+      line-height:1.45;
+      display:none;
+    }
+
+    .plan .result-card{ padding:12px; }
+    .plan-style{
+      background:#b2dfdb;
+      border:2px dashed #00897b;
+      border-radius:12px;
+      padding:12px 14px;
+      width:100%;
+      text-align:left;
+      line-height:1.35;
+      overflow:hidden;
+      word-break:normal;
+      overflow-wrap:anywhere;
+    }
+    #planOutput ul{ margin:8px 0 0; padding-left:1.15em; }
+    #planOutput li{ margin:2px 0; line-height:1.35; }
+    #planOutput .plan-hr{ border:0; border-top:1px solid rgba(0,137,123,.35); margin:10px 0; }
+    #planOutput.plan-empty{ display:flex; align-items:center; min-height:70px; }
+    #planOutput .empty-msg{ white-space:normal; line-height:1.5; }
 
     /* 対価（枠内で完結） */
-    .reward-box{ margin-top:10px; padding:12px; border-radius:12px; border:2px dashed rgba(0,0,0,.12); background:#fff; box-sizing:border-box; }
-    .reward-head{ display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; }
-    .reward-head-left{ display:flex;align-items:center;gap:10px;flex-wrap:wrap; }
-    .reward-head input[type="checkbox"]{ width:20px;height:20px;accent-color:var(--accent);cursor:pointer;flex:0 0 auto; }
+    .reward-box{
+      margin-top:10px;
+      padding:12px;
+      border-radius:12px;
+      border:2px dashed rgba(0,0,0,.12);
+      background:#fff;
+    }
+    .reward-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .reward-head-left{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .reward-head input[type="checkbox"]{
+      width:20px;height:20px;
+      accent-color:var(--accent);
+      cursor:pointer;
+      flex:0 0 auto;
+    }
     .reward-title{ font-weight:900; user-select:none; cursor:pointer; line-height:1.25; }
-    .reward-panel{display:none;margin-top:10px;}
-    .reward-panel.open{display:block;}
-    .reward-item{ border:2px dashed rgba(120,148,64,.28); background:#fbfff1; border-radius:12px; padding:10px 12px; box-sizing:border-box; margin-top:8px; }
-    .reward-item-head{ display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap; }
-    .reward-item-left{ display:flex;align-items:center;gap:10px;flex-wrap:wrap; }
-    .reward-item-head input[type="checkbox"]{ width:20px;height:20px;accent-color:var(--accent);cursor:pointer;flex:0 0 auto; }
+
+    .reward-panel{ display:none; margin-top:10px; }
+    .reward-panel.open{ display:block; }
+
+    .reward-item{
+      border:2px dashed rgba(120,148,64,.28);
+      background:#fbfff1;
+      border-radius:12px;
+      padding:10px 12px;
+      margin-top:8px;
+    }
+    .reward-item-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .reward-item-left{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .reward-item-head input[type="checkbox"]{
+      width:20px;height:20px;
+      accent-color:var(--accent);
+      cursor:pointer;
+      flex:0 0 auto;
+    }
     .reward-item .label{ font-weight:900; user-select:none; cursor:pointer; }
-    .reward-item.filled{border-color:rgba(120,148,64,.55);background:#f4ffe2;}
-    .reward-fields{margin-top:8px;display:none;}
-    .reward-fields.open{display:block;}
-    .reward-smallnote{margin-top:8px;font-size:.86em;color:#6d4c41;line-height:1.45;opacity:.92;}
+    .reward-item.filled{ border-color:rgba(120,148,64,.55); background:#f4ffe2; }
+
+    .reward-fields{ margin-top:8px; display:none; }
+    .reward-fields.open{ display:block; }
+
+    .reward-smallnote{ margin-top:8px; font-size:.86em; color:#6d4c41; line-height:1.45; opacity:.92; }
 
     /* 買値：対価（ベル）支払ありの場合（ベル入力がある時だけ表示） */
     .reward-result{
@@ -89,69 +309,152 @@
       border-radius:12px;
       border:2px dashed rgba(255,183,0,.55);
       background:#fff;
-      box-sizing:border-box;
       line-height:1.55;
     }
-    .reward-result.open{display:block;}
+    .reward-result.open{ display:block; }
 
     /* ATM */
-    .atm-note{font-size:.9em;color:#5e35b1;line-height:1.5;margin-top:8px;font-weight:700;}
-    .atm-note-sub{font-weight:400;}
-    .atm-line{margin-top:8px;padding:10px 12px;background:#fff;border-radius:12px;border:2px dashed #d1c4e9;line-height:1.55;box-sizing:border-box;}
-    .atm-subline{margin-top:8px;padding-top:8px;border-top:1px dashed rgba(103,58,183,.25);font-size:.92em;color:#4a148c;line-height:1.55;display:none;}
-    .atm-chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid rgba(103,58,183,.35);background:#f7f2ff;font-size:.9em;line-height:1.2;margin:6px 8px 0 0;max-width:100%;box-sizing:border-box;}
-    .atm-chip b{font-weight:900;}
-    .atm-chip .mono{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-    .memo-mini{font-size:.92em;color:#455a64;line-height:1.5;}
-    .memo-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
-    .memo-white{background:#fff;border-radius:12px;border:2px dashed #c0c6cc;padding:10px 12px;box-sizing:border-box;}
-    .counter{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-    .counter .val{min-width:64px;text-align:center;font-size:1.2em;color:#37474f;font-weight:800;background:#fff;border:2px dashed #90a4ae;border-radius:12px;padding:6px 10px;box-sizing:border-box;}
-    .shortcut-box{margin-top:12px;background:#fff;border-radius:12px;border:2px dashed #90a4ae;padding:12px;box-sizing:border-box;}
-    .shortcut-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px;}
-    .shortcut-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-    .shortcut-item{border:1px solid rgba(0,0,0,.10);border-radius:12px;padding:10px;background:#fafafa;box-sizing:border-box;}
-    .shortcut-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;}
-    .dir{font-weight:900;font-size:1.05em;white-space:nowrap;}
-    .tool-view{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-    .tool-img{width:34px;height:34px;object-fit:contain;background:#fff;border-radius:8px;border:1px solid rgba(0,0,0,.08);padding:4px;box-sizing:border-box;}
-    select{width:100%;padding:10px 12px;border-radius:12px;border:2px solid #e0e0e0;background:#fff;font-size:14px;box-sizing:border-box;outline:none;}
-    select:focus{border-color:#90a4ae;}
-    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;}
-
-    /* 目標：ラベル行に余白（入力とボタンが詰まるのを防ぐ） */
-    .goal .input-group .memo-row{margin-bottom:10px;}
-    .goal .input-group .memo-row .btn{margin-top:4px;}
-
-    /* ふりがなOFF時：見出しの変な空白を消す（【目標達成 への 道】等） */
-    body.no-ruby .header-left{gap:0;}
-    body.no-ruby .header-left .header-sub{margin-left:6px;}
-    body.no-ruby .goal .header-left,
-    body.no-ruby .plan .header-left{
-      letter-spacing:0;
-      word-spacing:0;
-      gap:0;
+    .atm-note{ font-size:.9em; color:#5e35b1; line-height:1.5; margin-top:8px; font-weight:700; }
+    .atm-note-sub{ font-weight:400; }
+    .atm-line{
+      margin-top:8px;
+      padding:10px 12px;
+      background:#fff;
+      border-radius:12px;
+      border:2px dashed #d1c4e9;
+      line-height:1.55;
     }
+    .atm-subline{
+      margin-top:8px;
+      padding-top:8px;
+      border-top:1px dashed rgba(103,58,183,.25);
+      font-size:.92em;
+      color:#4a148c;
+      line-height:1.55;
+      display:none;
+    }
+    .atm-chip{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:4px 10px;
+      border-radius:999px;
+      border:1px solid rgba(103,58,183,.35);
+      background:#f7f2ff;
+      font-size:.9em;
+      line-height:1.2;
+      margin:6px 8px 0 0;
+      max-width:100%;
+    }
+    .atm-chip b{ font-weight:900; }
+    .atm-chip .mono{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+    .memo-mini{ font-size:.92em; color:#455a64; line-height:1.5; }
+    .memo-row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+    .memo-white{
+      background:#fff;
+      border-radius:12px;
+      border:2px dashed #c0c6cc;
+      padding:10px 12px;
+    }
+
+    .counter{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .counter .val{
+      min-width:64px;
+      text-align:center;
+      font-size:1.2em;
+      color:#37474f;
+      font-weight:800;
+      background:#fff;
+      border:2px dashed #90a4ae;
+      border-radius:12px;
+      padding:6px 10px;
+    }
+
+    .shortcut-box{
+      margin-top:12px;
+      background:#fff;
+      border-radius:12px;
+      border:2px dashed #90a4ae;
+      padding:12px;
+    }
+    .shortcut-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:10px;
+    }
+    .shortcut-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .shortcut-item{
+      border:1px solid rgba(0,0,0,.10);
+      border-radius:12px;
+      padding:10px;
+      background:#fafafa;
+    }
+    .shortcut-top{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+    .dir{ font-weight:900; font-size:1.05em; white-space:nowrap; }
+    .tool-view{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+    .tool-img{
+      width:34px;height:34px;
+      object-fit:contain;
+      background:#fff;
+      border-radius:8px;
+      border:1px solid rgba(0,0,0,.08);
+      padding:4px;
+    }
+    select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:2px solid #e0e0e0;
+      background:#fff;
+      font-size:14px;
+      outline:none;
+    }
+    select:focus{ border-color:#90a4ae; }
+
+    .mono{
+      font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    }
+
+    /* 目標：ラベル行に余白 */
+    .goal .input-group .memo-row{ margin-bottom:10px; }
+    .goal .input-group .memo-row .btn{ margin-top:4px; }
+
+    /* ふりがなOFF時：見出しの変な空白 */
+    body.no-ruby .header-left{ gap:0; }
+    body.no-ruby .header-left .header-sub{ margin-left:6px; }
+    body.no-ruby .goal .header-left,
+    body.no-ruby .plan .header-left{ letter-spacing:0; word-spacing:0; gap:0; }
     body.no-ruby .goal .header-left ruby,
     body.no-ruby .plan .header-left ruby{ margin-right:0; }
 
+    /* ===== iPhone幅の詰め＆“見切れ”対策 ===== */
     @media (max-width:430px){
-      .header-row{flex-direction:column;align-items:flex-start;gap:8px;}
-      .header-row .btn{align-self:flex-start;}
-      .goal .memo-row{flex-direction:column;align-items:flex-start;gap:8px;}
-      .goal .memo-row .btn{align-self:flex-start;}
+      body{ padding:10px; }
+      .container{ padding:16px; border-radius:18px; }
+      .box{ padding:16px; }
+      .header-row{ flex-direction:column; align-items:flex-start; gap:8px; }
+      .header-row .btn{ align-self:flex-start; }
 
-      /* ===== iPhone見切れ対策（ここだけ追加・他は触らない） ===== */
-      .cap-row .cap-input{
-        width:auto;
-        min-width:0;
-        max-width:none;
-        flex:1 1 0;
-      }
-      /* =========================================================== */
+      input[type="text"]{ font-size:17px; padding:11px 12px; }
+      .cap-row .cap-input{ width:72px; min-width:64px; max-width:84px; }
+
+      .goal .memo-row{ flex-direction:column; align-items:flex-start; gap:8px; }
+      .goal .memo-row .btn{ align-self:flex-start; }
+    }
+
+    @media (max-width:360px){
+      input[type="text"]{ font-size:16px; }
+      .cap-row .cap-input{ width:66px; min-width:60px; max-width:78px; }
+      .separator{ margin:0 6px; }
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h2>カブ価計算・利益計算ツール</h2>
@@ -193,9 +496,8 @@
 
         <!-- ベル対価がある時だけ -->
         <div class="reward-result" id="buyRewardResult">
-          <!-- ★ここにふりがなを付与 -->
           <div style="font-weight:900;margin-bottom:6px;">
-            <ruby>対価<rt>たいか</rt></ruby><ruby>支払<rt>しはら</rt></ruby>い（<ruby>ベル<rt>べる</rt></ruby>）ありの<ruby>場合<rt>ばあい</rt></ruby>
+            <ruby>対価支払い<rt>たいかしはらい</rt></ruby>（ベル）ありの<ruby>場合<rt>ばあい</rt></ruby>
           </div>
           <ruby>支払額<rt>しはらいがく</rt></ruby>：<span id="costWithReward" class="red-val">0</span> ベル<br />
           <span class="memo-mini">
@@ -209,10 +511,7 @@
         <div class="reward-head">
           <div class="reward-head-left">
             <input type="checkbox" id="buyRewardEnabled" />
-            <!-- ★ここにふりがなを付与 -->
-            <label class="reward-title" for="buyRewardEnabled">
-              <ruby>対価<rt>たいか</rt></ruby><ruby>支払<rt>しはら</rt></ruby>いがある<ruby>時<rt>とき</rt></ruby>☑
-            </label>
+            <label class="reward-title" for="buyRewardEnabled"><ruby>対価支払い<rt>たいかしはらい</rt></ruby>がある<ruby>時<rt>とき</rt></ruby>☑</label>
           </div>
         </div>
 
@@ -256,16 +555,18 @@
             <div class="reward-item-head">
               <div class="reward-item-left">
                 <input type="checkbox" id="buyChkOther" />
-                <label class="label" for="buyChkOther">他アイテム</label>
+                <label class="label" for="buyChkOther"><ruby>他<rt>ほか</rt></ruby>アイテム</label>
               </div>
             </div>
             <div class="reward-fields" id="buyFieldsOther">
-              <p class="sub-text" style="margin-top:8px;"><b>他アイテム</b></p>
+              <p class="sub-text" style="margin-top:8px;"><b><ruby>他<rt>ほか</rt></ruby>アイテム</b></p>
               <textarea id="buyRewardOther" rows="2" placeholder="例：金鉱石×2、家具、素材 など"></textarea>
             </div>
           </div>
 
-          <div class="reward-smallnote">※ここはメモ用途（ATM補助の差し引き対象は「売値側のベル」のみ）</div>
+          <div class="reward-smallnote">
+            ※ここはメモ用途（ATM<ruby>補助<rt>ほじょ</rt></ruby>の<ruby>差し引き<rt>さしひき</rt></ruby><ruby>対象<rt>たいしょう</rt></ruby>は「売値側のベル」のみ）
+          </div>
         </div>
       </div>
     </div>
@@ -290,10 +591,7 @@
         <div class="reward-head">
           <div class="reward-head-left">
             <input type="checkbox" id="sellRewardEnabled" />
-            <!-- ★ここにふりがなを付与 -->
-            <label class="reward-title" for="sellRewardEnabled">
-              <ruby>対価<rt>たいか</rt></ruby><ruby>支払<rt>しはら</rt></ruby>いがある<ruby>時<rt>とき</rt></ruby>☑
-            </label>
+            <label class="reward-title" for="sellRewardEnabled"><ruby>対価支払い<rt>たいかしはらい</rt></ruby>がある<ruby>時<rt>とき</rt></ruby>☑</label>
           </div>
         </div>
 
@@ -317,7 +615,9 @@
             <div class="reward-item-head">
               <div class="reward-item-left">
                 <input type="checkbox" id="sellChkBells" />
-                <label class="label" for="sellChkBells"><ruby>ベル<rt>べる</rt></ruby>（ATM補助で差し引き）</label>
+                <label class="label" for="sellChkBells">
+                  <ruby>ベル<rt>べる</rt></ruby>（ATM<ruby>補助<rt>ほじょ</rt></ruby>で<ruby>差し引き<rt>さしひき</rt></ruby>）
+                </label>
               </div>
             </div>
             <div class="reward-fields" id="sellFieldsBells">
@@ -337,16 +637,16 @@
             <div class="reward-item-head">
               <div class="reward-item-left">
                 <input type="checkbox" id="sellChkOther" />
-                <label class="label" for="sellChkOther">他アイテム</label>
+                <label class="label" for="sellChkOther"><ruby>他<rt>ほか</rt></ruby>アイテム</label>
               </div>
             </div>
             <div class="reward-fields" id="sellFieldsOther">
-              <p class="sub-text" style="margin-top:8px;"><b>他アイテム</b></p>
+              <p class="sub-text" style="margin-top:8px;"><b><ruby>他<rt>ほか</rt></ruby>アイテム</b></p>
               <textarea id="sellRewardOther" rows="2" placeholder="例：DIYレシピ、素材、家具 など"></textarea>
             </div>
           </div>
 
-          <div class="reward-smallnote">※マイチケと他アイテムは表示用（ATM入金総額に反映しない）</div>
+          <div class="reward-smallnote">※マイチケと<ruby>他<rt>ほか</rt></ruby>アイテムは表示用（ATM入金総額に反映しない）</div>
         </div>
       </div>
 
@@ -384,12 +684,14 @@
 
       <div class="result-card">
         <ruby>不足額<rt>ふそくがく</rt></ruby>：<span id="neededAmount" class="red-val">0</span> ベル
+
         <div id="tripDisplay" class="trip-compare">
           <div class="highlight-box">
             <span class="sub-text">カバン<ruby>最大<rt>さいだい</rt></ruby></span>
             <span class="capacity-label">(40マス)</span>
             <span class="trip-num"><span id="tripsFull">0</span><ruby>回<rt>かい</rt></ruby></span>
           </div>
+
           <div class="highlight-box small">
             <span class="sub-text"><ruby>今<rt>いま</rt></ruby>の<ruby>設定<rt>せってい</rt></ruby></span>
             <span class="capacity-label">(カバン<span id="currentCapacityText">0</span>マス)</span>
@@ -515,7 +817,9 @@
       </div>
 
       <div style="height:12px;"></div>
-      <div class="memo-row"><button class="btn danger" id="clearMemoAll" type="button"><ruby>メモ<rt>めも</rt></ruby>を<ruby>全消去<rt>ぜんしょうきょ</rt></ruby></button></div>
+      <div class="memo-row">
+        <button class="btn danger" id="clearMemoAll" type="button"><ruby>メモ<rt>めも</rt></ruby>を<ruby>全消去<rt>ぜんしょうきょ</rt></ruby></button>
+      </div>
     </div>
   </div>
 
@@ -583,6 +887,7 @@
     // 目標：どこで削っても桁が落ちる／途中入れ替えは右0維持
     let targetFixedLen=0;
     let targetBefore=null;
+
     function captureTargetBeforeInput(e){
       const el=e.target;
       if(!el || el.id!=="targetBank") return;
@@ -601,6 +906,7 @@
       const rawBefore=el.value;
       const caretBefore=el.selectionStart ?? rawBefore.length;
       let v=rawBefore.replace(/[０-９]/g, s=>String.fromCharCode(s.charCodeAt(0)-0xFEE0));
+
       const digitIdx=digitsLeftOfCaret(v, caretBefore);
       const newDigitsRaw=normalizeDigits(v);
 
@@ -611,7 +917,6 @@
       const prevDigits=(targetBefore && typeof targetBefore.digits==="string") ? targetBefore.digits : null;
       const prevLen=prevDigits ? prevDigits.length : targetFixedLen;
       const nowLen=newDigitsRaw.length;
-
       const inputType=(targetBefore && targetBefore.inputType) ? targetBefore.inputType : "";
       const deleting=isDeleteType(inputType) || (prevDigits!==null && nowLen<prevLen);
 
@@ -646,10 +951,11 @@
       const rawBefore=el.value;
       const caretBefore=el.selectionStart ?? rawBefore.length;
       let v=rawBefore.replace(/[０-９]/g, s=>String.fromCharCode(s.charCodeAt(0)-0xFEE0));
-      const digitIdx=digitsLeftOfCaret(v, caretBefore);
 
+      const digitIdx=digitsLeftOfCaret(v, caretBefore);
       const rawDigits=v.replace(/[^0-9]/g,"");
       const formatted = rawDigits!=="" ? Number(rawDigits).toLocaleString() : "";
+
       el.value=formatted;
 
       const newCaret=caretFromDigitIndex(formatted, digitIdx);
@@ -682,7 +988,34 @@
       });
     });
 
-    // 対価：枠内で完結（項目ごとに中身を内包）
+    // ===== iPhone: 数字欄をタップしたら全選択（消しにくさ対策）=====
+    const AUTO_SELECT_IDS = new Set([
+      "buyPrice","sellPrice","bags","currentBank","targetBank",
+      "buyRewardTickets","buyRewardFullBags","buyRewardBells",
+      "sellRewardTickets","sellRewardFullBags","sellRewardBells",
+      "rows","slots"
+    ]);
+
+    function isIOS(){
+      return /iP(hone|od|ad)/.test(navigator.userAgent);
+    }
+    function wireAutoSelect(){
+      if(!isIOS()) return;
+      AUTO_SELECT_IDS.forEach(id=>{
+        const el=document.getElementById(id);
+        if(!el) return;
+        el.addEventListener("focus", ()=>{
+          setTimeout(()=>{
+            try{
+              const v=el.value||"";
+              el.setSelectionRange(0, v.length);
+            }catch(e){}
+          }, 0);
+        });
+      });
+    }
+
+    // ===== 対価（枠内で完結）=====
     const buyRewardEnabledEl = document.getElementById("buyRewardEnabled");
     const sellRewardEnabledEl = document.getElementById("sellRewardEnabled");
     const buyRewardPanel = document.getElementById("buyRewardPanel");
@@ -767,10 +1100,12 @@
     buyRewardOtherEl.addEventListener("input", ()=>{
       saveState({ buyRewardOther: buyRewardOtherEl.value });
       refreshRewardItems();
+      calc();
     });
     sellRewardOtherEl.addEventListener("input", ()=>{
       saveState({ sellRewardOther: sellRewardOtherEl.value });
       refreshRewardItems();
+      calc();
     });
 
     function hasBuyTickets(){ return parseNumber(buyRewardTicketsEl.value)>0; }
@@ -786,9 +1121,11 @@
       buyChkTickets.checked = bt || buyChkTickets.checked;
       buyChkBells.checked = bb || buyChkBells.checked;
       buyChkOther.checked = bo || buyChkOther.checked;
+
       setItemFilled(buyItemTickets, bt);
       setItemFilled(buyItemBells, bb);
       setItemFilled(buyItemOther, bo);
+
       openFields(buyFieldsTickets, !!buyChkTickets.checked);
       openFields(buyFieldsBells, !!buyChkBells.checked);
       openFields(buyFieldsOther, !!buyChkOther.checked);
@@ -797,9 +1134,11 @@
       sellChkTickets.checked = st || sellChkTickets.checked;
       sellChkBells.checked = sb || sellChkBells.checked;
       sellChkOther.checked = so || sellChkOther.checked;
+
       setItemFilled(sellItemTickets, st);
       setItemFilled(sellItemBells, sb);
       setItemFilled(sellItemOther, so);
+
       openFields(sellFieldsTickets, !!sellChkTickets.checked);
       openFields(sellFieldsBells, !!sellChkBells.checked);
       openFields(sellFieldsOther, !!sellChkOther.checked);
@@ -813,25 +1152,42 @@
     function clearSellBellsOnly(){ sellRewardFullBagsEl.value=""; sellRewardBellsEl.value=""; saveState({sellRewardFullBags:"",sellRewardBells:""}); }
     function clearSellOtherOnly(){ sellRewardOtherEl.value=""; saveState({sellRewardOther:""}); }
 
-    buyChkTickets.addEventListener("change", ()=>{ if(!buyChkTickets.checked) clearBuyTicketsOnly(); refreshRewardItems(); calc(); });
-    buyChkBells.addEventListener("change", ()=>{ if(!buyChkBells.checked) clearBuyBellsOnly(); refreshRewardItems(); calc(); });
-    buyChkOther.addEventListener("change", ()=>{ if(!buyChkOther.checked) clearBuyOtherOnly(); refreshRewardItems(); calc(); });
+    // ✅ 「押しても開かない」対策：チェック操作で必ず開閉と再計算
+    function wireRewardToggleOpen(){
+      const pairs = [
+        [buyChkTickets, buyFieldsTickets, clearBuyTicketsOnly],
+        [buyChkBells,   buyFieldsBells,   clearBuyBellsOnly],
+        [buyChkOther,   buyFieldsOther,   clearBuyOtherOnly],
+        [sellChkTickets, sellFieldsTickets, clearSellTicketsOnly],
+        [sellChkBells,   sellFieldsBells,   clearSellBellsOnly],
+        [sellChkOther,   sellFieldsOther,   clearSellOtherOnly],
+      ];
 
-    sellChkTickets.addEventListener("change", ()=>{ if(!sellChkTickets.checked) clearSellTicketsOnly(); refreshRewardItems(); calc(); });
-    sellChkBells.addEventListener("change", ()=>{ if(!sellChkBells.checked) clearSellBellsOnly(); refreshRewardItems(); calc(); });
-    sellChkOther.addEventListener("change", ()=>{ if(!sellChkOther.checked) clearSellOtherOnly(); refreshRewardItems(); calc(); });
+      pairs.forEach(([chk, fields, clearFn])=>{
+        if(!chk || !fields) return;
+        chk.addEventListener("change", ()=>{
+          if(!chk.checked) clearFn();
+          fields.classList.toggle("open", !!chk.checked);
+          refreshRewardItems();
+          calc();
+        });
+      });
+    }
 
     ["input","change"].forEach(ev=>{
       buyRewardTicketsEl.addEventListener(ev, ()=>{ refreshRewardItems(); calc(); });
       buyRewardFullBagsEl.addEventListener(ev, ()=>{ refreshRewardItems(); calc(); });
       buyRewardBellsEl.addEventListener(ev, ()=>{ refreshRewardItems(); calc(); });
+
       sellRewardTicketsEl.addEventListener(ev, ()=>{ refreshRewardItems(); calc(); });
       sellRewardFullBagsEl.addEventListener(ev, ()=>{ refreshRewardItems(); calc(); });
       sellRewardBellsEl.addEventListener(ev, ()=>{ refreshRewardItems(); calc(); });
     });
 
+    // ===== 往復カウンター =====
     const buyTripEl=document.getElementById("buyTripCount");
     const sellTripEl=document.getElementById("sellTripCount");
+
     function clampInt(v){ return Math.max(0, Math.floor(Number(v)||0)); }
     function setCounter(el,key,v){
       const n=clampInt(v);
@@ -864,7 +1220,7 @@
       clearField("targetBank");
     });
 
-    // Shortcuts
+    // ===== Shortcuts =====
     const TOOL_LIST=[
       {key:"",label:"（未設定）",img:""},
       {key:"scop",label:"スコップ",img:"img/scop.png"},
@@ -922,7 +1278,7 @@
         img.className="tool-img";
         img.alt=curTool.label;
         img.src=curTool.img||FALLBACK_IMG;
-        img.onerror=()=>{img.src=FALLBACK_IMG;};
+        img.onerror=()=>{ img.src=FALLBACK_IMG; };
         view.appendChild(img);
 
         const select=document.createElement("select");
@@ -933,11 +1289,13 @@
           if(t.key===curKey) opt.selected=true;
           select.appendChild(opt);
         });
+
         select.addEventListener("change", ()=>{
           const nextKey=select.value;
           const nextTool=toolByKey(nextKey);
           img.src=nextTool.img||FALLBACK_IMG;
           img.alt=nextTool.label;
+
           const cur=loadState()||{};
           const next={...(cur.shortcuts||{})};
           next[d.id]=nextKey;
@@ -961,6 +1319,7 @@
       shortcutMemoEl.value="";
       saveState({ shortcutMemo:"" });
     }
+
     document.getElementById("shortcutDefault").addEventListener("click", setShortcutDefault);
     document.getElementById("shortcutClear").addEventListener("click", clearShortcutsOnly);
     shortcutMemoEl.addEventListener("input", ()=> saveState({ shortcutMemo: shortcutMemoEl.value }));
@@ -978,11 +1337,20 @@
       else plan.classList.remove("plan-empty");
     }
 
+    function escHtml(s){
+      return String(s||"")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;");
+    }
+
     function calc(){
       const buyVal=document.getElementById("buyPrice").value;
       const sellVal=document.getElementById("sellPrice").value;
+
       const rowsInput=document.getElementById("rows");
       const slotsInput=document.getElementById("slots");
+
       const bankVal=document.getElementById("currentBank").value;
       const targetVal=document.getElementById("targetBank").value;
       const bagsVal=document.getElementById("bags").value;
@@ -1010,6 +1378,7 @@
 
       const bPrice=parseNumber(buyVal);
       const sPrice=parseNumber(sellVal);
+
       const currentBank=parseNumber(bankVal);
       const targetBank= targetVal==="" ? 0 : parseNumber(targetVal);
       const bags=parseNumber(bagsVal);
@@ -1053,13 +1422,12 @@
 
       const fullProfitPerTrip=(sPrice-bPrice)*4000;
       const tripsToGoalFull=(fullProfitPerTrip>0)? Math.ceil(needed/fullProfitPerTrip) : 0;
-
       document.getElementById("tripsFull").innerText=toComma(tripsToGoalFull);
       document.getElementById("tripsCurrent").innerText=toComma(tripsToGoal);
 
       refreshRewardItems();
 
-      // 買値：ベル対価がある時だけ表示（マイチケ/他アイテムでは出さない）
+      // 買値：ベル対価がある時だけ表示
       const buyRewardResult=document.getElementById("buyRewardResult");
       const buyRewardEnabled = !!buyRewardEnabledEl.checked;
       const buyBags = (buyRewardEnabled && buyChkBells.checked) ? parseNumber(buyRewardFullBagsEl.value) : 0;
@@ -1091,6 +1459,7 @@
       chipRow.innerHTML="";
 
       const hasAnyReward = sellRewardEnabled && (sellTickets>0 || rewardSubtract>0 || sellOther.length>0);
+
       if(hasAnyReward){
         if(sellTickets>0){
           const chip=document.createElement("div");
@@ -1101,13 +1470,13 @@
         if(rewardSubtract>0){
           const chip=document.createElement("div");
           chip.className="atm-chip";
-          chip.innerHTML=`<b>対価の差し引き</b>：<span class="mono">${toBagsText(rewardSubtract)}</span>`;
+          chip.innerHTML=`<b><ruby>対価<rt>たいか</rt></ruby>の<ruby>差し引き<rt>さしひき</rt></ruby></b>：<span class="mono">${toBagsText(rewardSubtract)}</span>`;
           chipRow.appendChild(chip);
         }
         if(sellOther.length>0){
           const chip=document.createElement("div");
           chip.className="atm-chip";
-          chip.innerHTML=`<b>他アイテム</b>：<span class="mono">${sellOther.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}</span>`;
+          chip.innerHTML=`<b><ruby>他<rt>ほか</rt></ruby>アイテム</b>：<span class="mono">${escHtml(sellOther)}</span>`;
           chipRow.appendChild(chip);
         }
 
@@ -1143,7 +1512,6 @@
       let tempBank=currentBank;
       let stepCount=0;
       let log="";
-
       const notEnoughNow=tempBank<needToFillBag;
 
       while(tempBank<needToFillBag && stepCount<200){
@@ -1175,10 +1543,8 @@
         message += `<ul>${log}</ul>`;
         if(stepCount>8){
           const rest=stepCount-8;
-          message += `
-            <div style="margin-top:6px;font-weight:900;color:#00695c;">...あと ${rest} <ruby>回<rt>かい</rt></ruby>の<ruby>往復<rt>おうふく</rt></ruby>...</div>
-            <div style="font-weight:900;color:#00695c;">（8<ruby>回目<rt>かいめ</rt></ruby>と<ruby>同<rt>おな</rt></ruby>じように<ruby>往復<rt>おうふく</rt></ruby>して<ruby>資金<rt>しきん</rt></ruby>を<ruby>貯<rt>た</rt></ruby>めます）</div>
-          `;
+          message += `<div style="margin-top:6px;font-weight:900;color:#00695c;">...あと ${rest} <ruby>回<rt>かい</rt></ruby>の<ruby>往復<rt>おうふく</rt></ruby>...</div>
+                      <div style="font-weight:900;color:#00695c;">（8<ruby>回目<rt>かいめ</rt></ruby>と<ruby>同<rt>おな</rt></ruby>じように<ruby>往復<rt>おうふく</rt></ruby>して<ruby>資金<rt>しきん</rt></ruby>を<ruby>貯<rt>た</rt></ruby>めます）</div>`;
         }
         message += `<div style="margin-top:10px;font-weight:900;">あと <span class="red-val">${toComma(stepCount)}</span> <ruby>往復<rt>おうふく</rt></ruby>でカバンがいっぱいになります。</div>`;
       }
@@ -1195,6 +1561,9 @@
 
     (function init(){
       const st=loadState();
+
+      wireAutoSelect();
+
       if(st){
         const ids=[
           "buyPrice","sellPrice","currentBank","targetBank","rows","slots","bags",
@@ -1210,7 +1579,6 @@
 
         if(typeof st.buyTripCount==="number") document.getElementById("buyTripCount").textContent=toComma(st.buyTripCount);
         if(typeof st.sellTripCount==="number") document.getElementById("sellTripCount").textContent=toComma(st.sellTripCount);
-
         if(typeof st.shortcutMemo==="string") shortcutMemoEl.value=st.shortcutMemo;
 
         if(typeof st.buyRewardOther==="string") buyRewardOtherEl.value=st.buyRewardOther;
@@ -1229,6 +1597,8 @@
         const d=normalizeDigits(tb.value);
         if(d) targetFixedLen=d.length;
       }
+
+      wireRewardToggleOpen();
 
       applyRewardPanels();
       refreshRewardItems();
